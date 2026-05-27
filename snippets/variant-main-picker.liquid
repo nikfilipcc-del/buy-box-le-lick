@@ -16,7 +16,7 @@
       assign strikethrough_color_mix = '#fff'
     endif
   %}
-  {% comment %} {% render 'multi-progress-bar' block_settings:block_settings %} {% endcomment %}
+  {% render 'multi-progress-bar' block_settings:block_settings %}
   <variant-picker
     class="variant-picker spacing-style variant-picker--{{ block_settings.alignment }} zoom-detail"
     style="--color-strikethrough-mix: {{ strikethrough_color_mix }}; {% render 'spacing-style', settings: block_settings %}"
@@ -34,7 +34,7 @@
     {% endif %}
   > 
 
-    {% render 'multi-progress-bar' block_settings:block_settings %}
+  
     <form class="variant-picker__form" data-product-handle="{{ product_resource.handle }}" data-selected-variant-price="$45.00" data-selected-variant-discount-price="0">
       {%- for product_option in product_resource.options_with_values -%}
         {%- liquid
