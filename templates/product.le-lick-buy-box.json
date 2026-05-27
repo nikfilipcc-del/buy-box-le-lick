@@ -10,7 +10,7 @@
 {
   "sections": {
     "main": {
-      "type": "product-information",
+      "type": "product-information-li-lick",
       "blocks": {
         "media-gallery": {
           "type": "_product-media-gallery",
