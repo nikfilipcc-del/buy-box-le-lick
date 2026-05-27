@@ -1,0 +1,10 @@
+{%- if settings.klaviyo_app_public_key != blank and settings.klaviyo_app_list_id != blank -%}
+    <a
+      style="display: none;"
+      id="out-of-stock"
+      class="klaviyo-bis-trigger {{ settings.klaviyo_app_style_class }}"
+      href="#"
+    >
+      {{ settings.klaviyo_app_button_text }}
+    </a>
+{% endif %}

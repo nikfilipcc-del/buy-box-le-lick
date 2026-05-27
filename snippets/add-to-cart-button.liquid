@@ -1,0 +1,202 @@
+{%- doc -%}
+  Renders an "Add to cart" button with dynamic text and state. It shows different text based on whether the product can be added to the cart and provides visual feedback when an item is added.
+
+  @param {boolean} can_add_to_cart - Whether the product can be added to the cart.
+  @param {string} add_to_cart_text - The text to display on the button.
+  @param {object} product - The product object to be added to the cart.
+  @param {boolean} [icon_only_on_mobile] - If `true`, only the icon is shown on mobile devices.
+  @param {string} [class] - Additional CSS classes to apply to the button.
+  @param {string} [id] - The ID attribute for the button.
+{%- enddoc -%}
+
+{%- liquid
+  assign default_add_to_cart_text = 'actions.add_to_cart' | t
+  assign product_variant_media = product.selected_or_first_available_variant.featured_media.preview_image | image_url: width: 100
+  if product.selected_or_first_available_variant.featured_media.preview_image == blank
+    assign product_variant_media = product.featured_media.preview_image | image_url: width: 100
+  endif
+
+  assign current_variant = product.selected_or_first_available_variant
+  capture inventory_status
+    render 'variant-availability', variant: current_variant
+  endcapture
+  capture inventory_status_text
+    render 'variant-availability', variant: current_variant, output_translation: true
+  endcapture
+-%}
+{% assign enalbe_klaviyo = false %}
+{%- if settings.klaviyo_app_public_key != blank and settings.klaviyo_app_list_id != blank -%}
+  {% assign enalbe_klaviyo = true %}
+{%- endif -%}
+<add-to-cart-component
+  ref="addToCartButtonContainer"
+  data-product-variant-media="{{ product_variant_media }}"
+  data-add-to-cart-animation="{{ settings.add_to_cart_animation }}"
+  data-klaviyo="{{ enalbe_klaviyo }}"
+>
+  <button
+    id="{{ id }}"
+    type="submit"
+    name="add"
+    ref="addToCartButton"
+    on:click="/handleClick"
+    class="button {{ class }}"
+    {% unless can_add_to_cart %}
+      disabled
+    {% endunless %}
+  >
+    <span
+      class="add-to-cart-text"
+    >
+      {% comment %} {% if inventory_status == 'InStock' %}
+        <span class="svg-wrapper add-to-cart-icon">
+          {{- 'icon-add-to-cart.svg' | inline_asset_content -}}
+        </span>
+      {% endif %} {% endcomment %}
+      <span class="add-to-cart-text__content{% if icon_only_on_mobile %} is-visually-hidden-mobile{% endif %}">
+        Add To Cart <div><span class="total-compare_price"></span> <span class="total_price"></span></div>
+      </span>
+    </span>
+    <span
+      class="add-to-cart-text"
+    >
+      {% comment %} {% if inventory_status == 'InStock' %}
+        <span class="svg-wrapper add-to-cart-icon">
+          {{- 'icon-add-to-cart.svg' | inline_asset_content -}}
+        </span>
+      {% endif %} {% endcomment %}
+      <span class="add-to-cart-text__content quantity-init{% if icon_only_on_mobile %} is-visually-hidden-mobile{% endif %}">
+        ADD AT LEAST 1 BOX
+      </span>
+    </span>
+    <span
+      aria-hidden="true"
+      class="add-to-cart-text--added"
+    >
+      <span class="svg-wrapper add-to-cart-icon--added">
+        {{- 'icon-checkmark.svg' | inline_asset_content -}}
+      </span>
+      <div class="{% if icon_only_on_mobile %}is-visually-hidden-mobile{% endif %}">
+        Add To Cart 
+      </div>
+    </span>
+  </button>
+  {% render 'product-bis-button' %}
+</add-to-cart-component>
+
+{% stylesheet %}
+  add-to-cart-component .add-to-cart-button:has(.quantity-init--style) {
+      background: #979797;
+      pointer-events: none;
+  }
+  .quantity-init--style {
+    display: block !important;
+  }
+  .add-to-cart-text {
+    display: flex;
+    gap: var(--gap-2xs);
+    align-items: center;
+    justify-content: center;
+    animation-duration: var(--animation-speed);
+    animation-timing-function: var(--animation-easing);
+    animation-fill-mode: forwards;
+    transition: opacity var(--animation-speed) var(--animation-easing);
+  }
+
+  .atc-added .add-to-cart-text {
+    animation-name: atc-slide-out;
+  }
+  .add-to-cart-text__content {
+    display: flex;
+    align-items: center;
+    gap: 36px;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 100%;
+
+    @media (max-width: 768px) {
+      font-size: 12px;
+      font-weight: 600;
+      gap: 18px;
+    }
+  }
+  .quantity-init {
+    display: none;
+  }
+  .add-to-cart-text__content div {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+
+    @media (max-width: 768px) {
+      gap: 4px
+    }
+
+    .total-compare_price {
+      font-size: 18px;
+      opacity: 0.5;
+      text-decoration: line-through;
+
+      @media (max-width: 768px) {
+        font-size: 10px;
+      }
+    }
+  }
+
+  .add-to-cart-text--added {
+    position: absolute;
+    inset: 0;
+    animation-duration: var(--animation-speed);
+    animation-timing-function: var(--animation-easing);
+    animation-fill-mode: forwards;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: width var(--animation-speed) var(--animation-easing),
+      opacity var(--animation-speed) var(--animation-easing);
+  }
+  .add-to-cart-button:hover {
+    background-color: #979797;
+  }
+
+  .atc-added .add-to-cart-text--added {
+    animation-name: atc-slide-in;
+  }
+    
+  .add-to-cart-text__content.mobile {
+    display: none;
+  }
+  @media (max-width: 768px) {
+    .add-to-cart-text__content.desktop {
+      display: none;
+    }
+    .add-to-cart-text__content.mobile {
+      display: block
+    }
+  }
+
+  @keyframes atc-slide-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.5em);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes atc-slide-out {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    to {
+      transform: translateY(-1em);
+      opacity: 0;
+    }
+  }
+{% endstylesheet %}

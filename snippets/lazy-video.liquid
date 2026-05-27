@@ -1,0 +1,45 @@
+{%- doc -%}
+  Renders a video
+
+  @param {object} video - The video object
+  @param {string} [class] - The class to apply to the video
+  @param {string} [loading] - The loading strategy ('lazy' or 'eager')
+  @param {boolean} [autoplay] - Whether to autoplay
+  @param {boolean} [loop] - Whether to loop
+  @param {boolean} [muted] - Whether to mute
+  @param {boolean} [controls] - Whether to controls
+
+  @example
+  {% render 'lazy-video', video: video, autoplay: autoplay, loop: loop, muted: muted, class: class, controls: controls, loading: loading %}
+{%- enddoc -%}
+
+{% liquid
+    for source in video.sources
+        if source.mime_type == 'video/mp4'
+            assign mp4_source = source.url
+        endif
+    endfor
+
+    assign poster = video.preview_image.src
+    if poster != blank
+        assign poster = shop.url | append: '/cdn/shop/' | append: poster
+    endif
+%}
+
+{% if video != blank %}
+    {% if loading == 'lazy' %}
+        <video
+            class="{{ class }}"
+            data-src="{{ mp4_source }}"
+            poster="{{ poster }}"
+            playsinline
+            preload="none"
+            {% if loop %} loop {% endif %}
+            {% if muted %} muted {% endif %}
+            {% if autoplay %} autoplay {% endif %}
+            {% if controls %} controls {% endif %}
+        ></video>
+    {% else %}
+        {{ video | video_tag: poster: poster, autoplay: autoplay, loop: loop, controls: controls, muted: muted, class: class }}
+    {% endif %}
+{% endif %}

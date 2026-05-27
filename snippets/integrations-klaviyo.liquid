@@ -1,0 +1,52 @@
+{%- if settings.klaviyo_app_public_key != blank and settings.klaviyo_app_list_id != blank -%}
+    <script src="https://a.klaviyo.com/media/js/onsite/onsite.js"></script>
+  
+    <script>
+      !function(){if(!window.klaviyo){window._klOnsite=window._klOnsite||[];try{window.klaviyo=new Proxy({},{get:function(n,i){return"push"===i?function(){var n;(n=window._klOnsite).push.apply(n,arguments)}:function(){for(var n=arguments.length,o=new Array(n),w=0;w<n;w++)o[w]=arguments[w];var t="function"==typeof o[o.length-1]?o.pop():void 0,e=new Promise((function(n){window._klOnsite.push([i].concat(o,[function(i){t&&t(i),n(i)}]))}));return e}}})}catch(n){window.klaviyo=window.klaviyo||[],window.klaviyo.push=function(){var n;(n=window._klOnsite).push.apply(n,arguments)}}}}();
+  
+      const klaviyo = window.klaviyo || [];
+  
+      klaviyo.init({
+        account: {{ settings.klaviyo_app_public_key | json }},
+        list: {{ settings.klaviyo_app_list_id | json }},
+        platform: "shopify",
+        collection_urls: ["/collections/", "/", "/products/"]   
+      });
+  
+      klaviyo.enable("backinstock",{
+        trigger: {
+          product_page_text: "{{ settings.klaviyo_app_button_text }}",
+          product_page_class: "{{ settings.klaviyo_app_style_class }}",
+          product_page_text_align: "center",
+          product_page_margin: "0px",
+          replace_anchor: false,
+          collection_page_class: 'button outline-button',
+          collection_page_text_align: 'center',
+          collection_page_width: '100%',
+          collection_page_text: "{{ settings.klaviyo_app_button_text }}",
+          collection_page_padding: 'inherit',
+        },
+        modal: {
+          headline: "{product_name}",
+          body_content: "{{ settings.klaviyo_app__body}}",
+          email_field_label: "{{ settings.klaviyo_app_email_label }}",
+          button_label: "{{ settings.klaviyo_app_button_text }}",
+          subscription_success_label: "{{ settings.klaviyo_app_success_message }}",
+          footer_content: '',
+          additional_styles: "@import url('https://fonts.googleapis.com/css?family=Helvetica+Neue');",
+          font_family: "Helvetica",
+          headers_font_family: "Helvetica",
+          drop_background_color: {{ settings.klaviyo_app_drop_background_color | json }},
+          background_color: {{ settings.klaviyo_app_background_color | json }},
+          text_color: {{ settings.klaviyo_app_text_color | json }},
+          button_text_color: {{ settings.klaviyo_app_button_text_color | json }},
+          button_background_color: {{ settings.klaviyo_app_button_background_color | json }},
+          close_button_color: {{ settings.klaviyo_app_close_button_text_color | json }},
+          error_background_color: {{ settings.klaviyo_app_error_background_color | json }},
+          error_text_color: {{ settings.klaviyo_app_error_text_color | json }},
+          success_background_color: {{ settings.klaviyo_app_success_background_color | json }},
+          success_text_color: {{ settings.klaviyo_app_success_text_color | json }}
+        }
+      });
+    </script>
+{%- endif -%}

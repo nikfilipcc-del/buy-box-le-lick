@@ -1,0 +1,233 @@
+<div class="benefit-content__container spacing-style size-style {% if block.settings.inherit_color_scheme == false %}color-{{ block.settings.color_scheme }}{% endif %}" 
+ style="
+ {% render 'spacing-style', settings: block.settings %}
+  {% render 'size-style', settings: settings %}
+  {% if block.settings.inherit_color_scheme %}
+  --border-color: #000;
+  {% endif %}
+ "
+>
+    <div 
+     class="benefit-content__wrapper"
+     style="--content-gap: {{ block.settings.content_gap }}px;"
+    >
+        <div class="benefit-heading--with__icon">
+            {% if block.settings.content_icon != blank %}
+                <div class="benefit-content__icon">{{ block.settings.content_icon | image_url: width: block.settings.content_icon.width, height: block.settings.content_icon.height | image_tag }}</div>
+            {% endif %}
+            <div class="benefit-content__heading">{{ block.settings.content_heading }}</div>
+        </div>
+        <div class="benefit-content__detail">{{ block.settings.content_detail }}</div>
+    </div>
+</div>
+
+{% stylesheet %}
+  .benefit-content__block {
+    width: 100%;
+  }
+
+  .benefit-content__container {
+    border-top: 1px solid var(--border-color);
+  }
+
+  .benefit-content__wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: var(--content-gap);
+  }
+
+  .benefit-content__wrapper,
+  .benefit-heading--with__icon {
+    align-items: flex-start;
+  }
+
+  .benefit-heading--with__icon,
+  .benefit-content__detail {
+    width: 50%;
+  }
+
+  .benefit-heading--with__icon {
+    display: flex;
+    gap: clamp(10px, 10vw, 70px);
+    max-width: 402px;
+    width: 100%;
+  }
+
+  .benefit-content__heading > * {
+    text-transform: uppercase;
+  }
+
+  .benefit-content__icon {
+    width: 48px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .benefit-content__wrapper,
+    .benefit-heading--with__icon {
+        flex-direction: column;
+    }
+
+    .benefit-heading--with__icon {
+        gap: 14px;
+    }
+
+    .benefit-content__wrapper {
+        gap: 24px;
+    }
+
+    .benefit-content__detail {
+        margin-bottom: 12px;
+    }
+
+    .benefit-heading--with__icon, .benefit-content__detail {
+        width: 100%;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+    {
+        "name": "Benefit content",
+        "class": "benefit-content__block",
+        "settings": [
+            {
+                "type": "image_picker",
+                "id": "content_icon",
+                "label": "Icon",
+            },
+            {
+                "type": "richtext",
+                "id": "content_heading",
+                "label": "icon",
+                "default": "<p>sodium</p>"
+            },
+            {
+                "type": "richtext",
+                "id": "content_detail",
+                "label": "icon",
+                "default": "<p>Replaces what you sweat</p>"
+            },
+            {
+                "type": "header",
+                "content": "Layout",
+            },
+            {
+                "type": "range",
+                "id": "content_gap",
+                "min": 0,
+                "max": 100,
+                "unit": "px",
+                "step": 1,
+                "default": 0,
+                "label": "Gap"
+            },
+            {
+                "type": "header",
+                "content": "Appearance",
+            },
+            {
+                "type": "checkbox",
+                "id": "inherit_color_scheme",
+                "label": "t:settings.inherit_color_scheme",
+                "default": true,
+            },
+            {
+                "type": "color_scheme",
+                "id": "color_scheme",
+                "label": "t:settings.color_scheme",
+                "default": "scheme-1",
+                "visible_if": "{{ block.settings.inherit_color_scheme == false }}"
+            },
+            {
+                "type": "header",
+                "content": "t:content.padding"
+            },
+            {
+                "type": "range",
+                "id": "padding-block-start",
+                "label": "t:settings.top",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "padding-block-end",
+                "label": "t:settings.bottom",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "padding-inline-start",
+                "label": "t:settings.left",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "padding-inline-end",
+                "label": "t:settings.right",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "padding-block-start-mobile",
+                "label": "Top Mobile",
+                "min": -1,
+                "max": 99,
+                "step": 1,
+                "unit": "px",
+                "default": -1
+            },
+            {
+                "type": "range",
+                "id": "padding-block-end-mobile",
+                "label": "Bottom Mobile",
+                "min": -1,
+                "max": 99,
+                "step": 1,
+                "unit": "px",
+                "default": -1
+            },
+            {
+                "type": "range",
+                "id": "padding-inline-start-mobile",
+                "label": "Left Mobile",
+                "min": -1,
+                "max": 99,
+                "step": 1,
+                "unit": "px",
+                "default": -1
+            },
+            {
+                "type": "range",
+                "id": "padding-inline-end-mobile",
+                "label": "Right Mobile",
+                "min": -1,
+                "max": 99,
+                "step": 1,
+                "unit": "px",
+                "default": -1
+            }
+        ],
+        "presets": [
+            {
+                "name": "Benefit content",
+                "category": "Basic"
+            }
+        ]
+    }
+{% endschema %}

@@ -1,0 +1,341 @@
+{%- liquid
+  assign product = closest.product
+  assign selected_variant = product.selected_or_first_available_variant
+  assign product_form_id = 'BuyButtons-ProductForm-' | append: section.id
+
+  if request.visual_preview_mode and product == blank
+    assign product = collections.all.products.first
+  endif
+
+  assign variant = closest.product.selected_or_first_available_variant
+  assign inventory_quantity = variant.inventory_quantity
+  assign inventory_policy = variant.inventory_policy
+
+  if variant.inventory_management == 'shopify'
+    assign inventory_managed = true
+  endif
+
+  if variant.quantity_rule.min > variant.inventory_quantity and inventory_managed and inventory_policy == 'deny'
+    assign quantity_rule_soldout = true
+  endif
+
+  if inventory_managed
+    if inventory_quantity <= 0 and inventory_policy == 'deny' or quantity_rule_soldout
+      assign can_add_to_cart = false
+      assign add_to_cart_text = 'products.product.sold_out' | t
+    else
+      assign can_add_to_cart = true
+      assign add_to_cart_text = 'products.product.add_to_cart' | t
+    endif
+  else
+    if closest.product.selected_or_first_available_variant != null
+      assign can_add_to_cart = true
+      assign add_to_cart_text = 'products.product.add_to_cart' | t
+    else
+      assign can_add_to_cart = false
+      assign add_to_cart_text = 'products.product.unavailable' | t
+    endif
+  endif
+-%}
+
+{% stylesheet %}
+  .product-subscription {
+    display: flex;
+    flex-direction: var(--subscription-direction);
+    gap: var(--subscription-gap);
+  }
+  .subscription-block {
+    width: 100%;
+  }
+  .onetime-wrapper,
+  .subscription-heading {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  .onetime-title__price-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .onetime-title--price {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .product-subscription__input {
+    display: none;
+  }
+
+  .subscription-group--container:has(.product-subscription__input:disabled) {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .product-subscription__radio {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: block;
+    border: 1px solid #000000;
+    position: relative;
+    min-width: 16px;
+  }
+
+  .product-subscription__input:checked + .product-subscription__radio::after {
+    content: '';
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: block;
+    background-color: #000000;
+    position: absolute;
+  }
+
+  .product-subscription--title, .onetime-title {
+    font-weight: 700;
+    font-style: Bold;
+    font-size: 18px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-transform: uppercase;
+  }
+
+  .subscription-detail,
+  .subscription-add_to__cart {
+    padding-left: 48px;
+  }
+
+  .onetime-container,
+  .onetime-add_to__cart {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .subscription-group--container {
+    gap: 24px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .onetime-add_to__cart {
+    display: none;
+  }
+{% endstylesheet %}
+
+{% style %}
+  .product-subscription__container {
+    background-color: {{ block.settings.subscription_color }};
+    border-radius: {{ block.settings.subscription_border_radius }}px;
+  }
+  .onetime-wrapper {
+    background-color: {{ block.settings.onetime_color }};
+    border-radius: {{ block.settings.onetime_border_radius }}px;
+    width: 100%;
+  }
+
+  .onetime-container, .subscription-group--container {
+    padding: 28px 0;
+    border-top: 1px solid var(--color-border);
+  }
+{% endstyle %}
+
+<product-subscription
+  class="product-block product-subscription color-{{ block.settings.color_scheme }}"
+  {{ block.shopify_attributes }}
+  style="
+    --subscription-direction: {{ block.settings.direction }};
+    --subscription-gap: {{ block.settings.gap }}px;
+  "
+>
+  <div class="subscription-group--container">
+    {% for group in product.selling_plan_groups %}
+      <div class="product-subscription__container">
+        {% for selling_plan in group.selling_plans %}
+          <label class="subscription-heading" for="product-subscription--{{ selling_plan.id }}">
+            <input
+              type="radio"
+              id="product-subscription--{{ selling_plan.id }}"
+              name="selling_plan"
+              value="{{ selling_plan.id }}"
+              data-price="{{ selected_variant.price | times: 0.75 | money }}"
+              form="{{ product_form_id }}"
+              class="product-subscription__input"
+              checked
+            >
+            <span class="product-subscription__radio"></span>
+            <div
+              style="
+                display: flex;
+                width: 100%;
+                justify-content: space-between;
+              "
+            >
+              <span class="product-subscription--title">
+                {{- block.settings.subscription_heading -}}
+              </span>
+              <span id="subscription-price" class="selling-plan--price">
+                {{ selected_variant.price | money }}
+              </span>
+            </div>
+          </label>
+        {% endfor %}
+      </div>
+    {% endfor %}
+    <div class="subscription-add_to__cart" data-buy-buttons="subscription">
+      {% content_for 'block', type: 'buy-buttons', id: 'subscription-buy-buttons' %}
+    </div>
+    <div class="subscription-detail">
+      {{ block.settings.susbscription_detail }}
+    </div>
+  </div>
+  <div class="onetime-container">
+    <div class="onetime-wrapper">
+        <label for="product-subscription--onetime" class="onetime-wrapper color-{{ block.settings.onetime_color_scheme }}">
+          <input
+            type="radio"
+            id="product-subscription--onetime"
+            class="product-subscription__input"
+            name="selling_plan"
+            value=""
+            data-price="{{ selected_variant.price | money }}"
+            form="{{ product_form_id }}"
+          >
+          <span class="product-subscription__radio"></span>
+          <div class="onetime-title__price-wrapper">
+            <div class="onetime-title--price">
+                <span class="onetime-title">
+                  {{ block.settings.onetime_heading }}
+                </span>
+                <span class="onetime--price">
+                  {{ selected_variant.price | money }}
+                </span>
+            </div>
+          </div>
+        </label>
+    </div>
+    <div class="onetime-add_to__cart" data-buy-buttons="onetime">
+      {% content_for 'block', type: 'buy-buttons', id: 'onetime-buy-buttons' %}
+    </div>
+    <div class="onetime-detail">
+      {% content_for 'block', type: 'multi-icon-with-text', id: 'multi-icon-with-text' %}
+    </div>
+  </div>
+</product-subscription>
+
+<script src="{{ 'product-subscription.js' | asset_url }}" defer></script>
+
+<script>
+function updateBuyButtons(wrapper) {
+  const checkedInput = wrapper.querySelector('input[name="selling_plan"]:checked');
+  if (!checkedInput) return;
+
+  const subscriptionButtons = wrapper.querySelector('.subscription-add_to__cart');
+  const onetimeButtons = wrapper.querySelector('.onetime-add_to__cart');
+
+  if (checkedInput.value === '') {
+    // One-time selected
+    subscriptionButtons.style.display = 'none';
+    onetimeButtons.style.display = 'block';
+  } else {
+    // Subscription selected
+    subscriptionButtons.style.display = 'block';
+    onetimeButtons.style.display = 'none';
+  }
+}
+
+/* Change handler */
+document.addEventListener('change', (event) => {
+  const input = event.target;
+  if (!input.matches('input[name="selling_plan"]')) return;
+
+  const wrapper = input.closest('.product-subscription');
+  if (!wrapper) return;
+
+  updateBuyButtons(wrapper);
+});
+
+/* Initial state on page load */
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.product-subscription').forEach((wrapper) => {
+    updateBuyButtons(wrapper);
+  });
+});
+</script>
+
+
+{% schema %}
+{
+  "name": "subscription",
+  "class": "subscription-block",
+  "settings": [
+    {
+      "type": "text",
+      "id": "onetime_heading",
+      "label": "Onetime heading"
+    },
+    {
+      "type": "text",
+      "id": "subscription_heading",
+      "label": "Subscription heading"
+    },
+    {
+      "type": "richtext",
+      "id": "susbscription_detail",
+      "label": "Subscriptoin detail",
+      "default": "<p>Fast Same-Day Shipping</p>"
+    },
+    {
+      "type": "select",
+      "id": "direction",
+      "options": [
+        {
+          "value": "column",
+          "label": "Vertical"
+        },
+        {
+          "value": "row",
+          "label": "Horizontal"
+        }
+      ],
+      "default": "column",
+      "label": "Direction"
+    },
+    {
+      "type": "range",
+      "min": 0,
+      "max": 100,
+      "unit": "px",
+      "default": 0,
+      "id": "gap",
+      "label": "Gap"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-3"
+    },
+  ],
+  "blocks": [
+    {
+        "type": "@theme"
+    }
+  ],
+  "presets": [
+    {
+      "name": "subscription",
+      "category": "Product"
+    }
+  ]
+}
+{% endschema %}

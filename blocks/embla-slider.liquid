@@ -1,0 +1,808 @@
+{% liquid
+  assign columns = block.settings.columns | default: 3
+  assign mobile_columns = block.settings.mobile_columns | default: 2
+  assign desktop_gap = block.settings.columns_gap | default: 16
+  assign mobile_gap = block.settings.columns_gap_mobile | default: 16
+  assign desktop_width = 100.0 | divided_by: columns
+  assign mobile_width = 100.0 | divided_by: mobile_columns
+  assign inner_columns = columns | minus: 1
+  assign inner_columns_mobile = mobile_columns | minus: 1
+  assign slide_gap = desktop_gap | times: inner_columns | divided_by: columns
+  assign slide_gap_mobile = mobile_gap | times: inner_columns_mobile | divided_by: mobile_columns
+  assign slide_width = "calc(" | append: desktop_width | append: "% - " | append: slide_gap | append: "px)"
+  assign slide_width_mobile = "calc(" | append: mobile_width | append: "% - " | append: slide_gap_mobile | append: "px)"
+
+  assign infinite = false
+  if block.settings.loop or block.settings.autoplay
+    assign infinite = true
+  endif
+%}
+
+<embla-slider 
+ id="embla-slider--{{ block.id }}"
+ class=
+ "
+ embla
+ spacing-style
+ {% if block.settings.enable_navigation == 'show-mobile' %}mobile-navigation{% endif %}
+ {% if block.settings.enable_navigation == 'show-desktop' %}desktop-navigation{% endif %}
+ {% if block.settings.enable_navigation == 'both' %}both-navigation{% endif %}
+ {% if block.settings.enable_pagination == 'show-mobile' %}mobile-pagination{% endif %}
+ {% if block.settings.enable_pagination == 'show-desktop' %}desktop-pagination{% endif %}
+ {% if block.settings.enable_pagination == 'both' %}both-pagination{% endif %}
+ "
+ data-autoplay='{{ block.settings.autoplay }}'
+ data-autoplay-speed='{{ block.settings.autoplay_speed | times: 1000 }}'
+ data-loop="{{ infinite }}"
+ style="
+ --slide-width: {{ slide_width }}; 
+ --slide-width-mobile: {{ slide_width_mobile }};
+ --horizontal-gap: {{ desktop_gap }}px;
+ --horizontal-gap-mobile: {{ mobile_gap }}px;
+ --autoplay-speed: {{ block.settings.autoplay_speed }}s;
+ {% render 'spacing-style', settings: block.settings %}
+ "
+ {% if block.settings.change_bg_color %}change-bg-color{% endif %}
+>
+  <div class="embla__viewport {% if block.settings.slider_scale %}slider_scale{% endif %}">
+    <div class="embla__container {{ block.id }}" id="embla-slide--{{ block.id }}">
+      {% content_for 'blocks' %}
+    </div>
+    {% unless block.settings.icons_style == 'none' %}
+    <div class="embla-navigation__wrapper{% if block.settings.navigation_position %} embla-navigation--position" {% endif %} data-style="{{ block.settings.icons_style }}" >
+        <button
+          class='embla__arrow embla__arrow--prev button'
+          type='button'
+          aria-label='Previous slide'
+          data-type={{ block.settings.icons_shape }}
+        >
+          <span class="embla-navigation">
+            {% if block.settings.icons_style == 'arrow' %}
+              {% render 'icon-arrow-prev' %}
+            {% else %}
+              {% render 'icon-chevron-prev' %}
+            {% endif %}
+          </span>
+        </button>
+        {% if block.settings.button_label != blank %}
+          <div class="embla-mobile__button show-now">
+            <a href="{{ block.settings.button_url }}" class="button">{{ block.settings.button_label }}</a>
+          </div>
+        {% endif %}
+        {% if block.settings.coming_soon_btn != blank %}
+          <div class="embla-mobile__button coming-soon">
+            <a href="" class="button">{{ block.settings.coming_soon_btn }}</a>
+          </div>
+        {% endif %}
+        <button
+          class='embla__arrow embla__arrow--next button'
+          type='button'
+          aria-label='Next slide'
+          data-type={{ block.settings.icons_shape }}
+        >
+          <span class="embla-navigation">
+            {% if block.settings.icons_style == 'arrow' %}
+              {% render 'icon-arrow-next' %}
+            {% else %}
+              {% render 'icon-chevron-next' %}
+            {% endif %}
+          </span>
+        </button>
+      </div>
+    {% endunless %}
+    
+  </div>
+  {% unless block.settings.slideshow_controls_style == 'none' %}
+    <div class="embla__dots" data-type={{ block.settings.slideshow_controls_style }} style="--scroll-width: {{ block.settings.scroll_width }}px; --scroll-width-mobile: {{ block.settings.scroll_width_mobile }}px" position="{{ block.settings.pagination_position }}">
+      {% for i in (1..block.settings.slides_count) %}
+        <button class="embla__dot" type="button"><span class="visually-hidden">{{ i }}</span></button>
+      {% endfor %}
+    </div>
+  {% endunless %}
+
+</embla-slider>
+
+{% stylesheet %}
+.embla__viewport .embla-navigation--position {
+  bottom: 0;
+  top: auto;
+  height: fit-content;
+  z-index: 1;
+}
+  embla-slider, 
+  .embla__viewport {
+    height: auto;
+  }
+
+.embla__viewport:has(
+  .embla__slide[data-next="true"] 
+  .product-shop__button-desktop a[href=""]
+) .embla-mobile__button a {
+  background-color: var(--color-primary-button-hover-background);
+}
+.coming-soon {
+  display: none !important;
+}
+.embla__viewport:has(
+  .embla__slide[data-next="true"] 
+  .product-shop__button-desktop a[href=""]
+) .coming-soon {
+  display: block !important;
+}
+  
+.embla__viewport:has(
+  .embla__slide[data-next="true"] 
+  .product-shop__button-desktop a[href=""]
+) .show-now {
+  display: none !important;
+}
+  
+  .navigation_position {
+    bottom: 0;
+    height: fit-content;
+    top: auto;
+  }
+
+  embla-slider {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+  }
+
+  embla-slider .embla__viewport {
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+  }
+
+  embla-slider .embla__viewport.is-draggable {
+    cursor: move;
+    cursor: grab;
+  }
+
+  embla-slider .embla__viewport.is-dragging {
+    cursor: grabbing;
+  }
+
+  embla-slider .embla__container {
+    display: flex;
+  }
+
+  embla-slider .embla__slide {
+    position: relative;
+    min-width: 100%;
+    margin-right: var(--horizontal-gap);
+    transition: background-color 0.3s ease;
+  }
+
+  embla-slider .embla__dots {
+    position: absolute;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 18px;
+  }
+
+  embla-slider .embla__dots[data-type="dots"] .embla__dot {
+    border-radius: 50%;
+    background-color: #000000;
+    display: block;
+    padding: 0;
+    border: none;
+    opacity: 0.15;
+    transition: 0.3s;
+  }
+  .embla-mobile__button {
+    display: none;
+    @media (max-width: 768px) {
+      padding-bottom: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 10px;
+    }
+  }
+
+  embla-slider .embla__dots .embla__dot.is-selected {
+    opacity: 1;
+  }
+
+  .embla-navigation__wrapper {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    top: 0;
+    left: 0;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .embla-navigation__wrapper[data-style="arrow"] .embla__arrow--next {
+    transform: rotate(180deg);
+  }
+
+  .embla__arrow {
+    padding: 12px;
+  }
+
+  .embla__arrow[data-type="circle"] {
+    border-radius: 50%;
+    background-color: var(--color-primary-button-background);
+    color: var(--color-primary-button-text);
+  }
+
+  .embla__arrow[data-type="square"] {
+    border-radius: 0;
+    background-color: var(--color-primary-button-background);
+    color: var(--color-primary-button-text);
+  }
+
+  .embla__arrow[data-type="none"] {
+    background-color: transparent;
+    color: var(--color-primary-button-text);
+  }
+
+  .embla-navigation {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .embla__dots[data-type="scroll"] .embla__dot {
+    position: relative;
+    border: 0;
+    width: var(--scroll-width);
+    height: 4px;
+    background-color: transparent;
+  }
+
+  .embla__dots[position="top"]{
+    top: 5%;
+  }
+
+  .embla__dots[position="bottom"]{
+    bottom: 0;
+  }
+
+  /* ---------------- DESKTOP ---------------- */
+  @media (min-width: 750px) {
+    embla-slider .embla__slide {
+      min-width: var(--slide-width);
+      height: auto;
+    }
+
+    embla-slider .embla__dots[data-type="dots"] .embla__dot {
+      width: 18px;
+      height: 18px;
+    }
+
+    embla-slider .embla__dots[data-type="dots"] .embla__dot.is-selected {
+      width: 24px;
+      height: 24px;
+    }
+
+    embla-slider.mobile-pagination .embla__dots {
+      display: none;
+    }
+
+    embla-slider.mobile-navigation .embla-navigation__wrapper {
+      display: none;
+    }
+  }
+
+  /* ---------------- MOBILE ---------------- */
+  @media (max-width: 749px) {
+      .embla__viewport.slider_scale {
+      padding-top: 20px;
+    }
+    .slider_scale .embla__slide {
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+    .slider_scale .embla__slide[data-next="true"] {
+      transform: scale(1.1);
+      height: 393px;
+    }
+    embla-slider .embla__slide {
+      min-width: var(--slide-width-mobile);
+    }
+
+    embla-slider .embla__dots[data-type="dots"] .embla__dot {
+      width: 12px;
+      height: 12px;
+    }
+
+    embla-slider .embla__dots[data-type="dots"] .embla__dot.is-selected {
+      width: 16px;
+      height: 16px;
+    }
+
+    embla-slider.desktop-pagination .embla__dots {
+      display: none;
+    }
+
+    embla-slider.desktop-navigation .embla-navigation__wrapper {
+      display: none;
+    }
+
+    .embla__dots[data-type="scroll"] .embla__dot {
+      width: var(--scroll-width-mobile);
+    }
+
+    embla-slider .embla__slide {
+      margin-right: var(--horizontal-gap-mobile);
+    }
+  }
+{% endstylesheet %}
+
+{% style %}
+ embla-slider .embla__container.{{ block.id }} {
+    display: flex;
+
+    @media (max-width: 768px) {
+      padding-bottom: {{ block.settings.embla__container__mobile_pb }}px;
+    }
+  }
+  {% if block.settings.autoplay %}
+    #embla-slider--{{ block.id }} .embla__dots[data-type="scroll"] .embla__dot.is-selected:before {
+      animation: fill var(--autoplay-speed) linear forwards;
+      opacity: 1;
+      height: 100%;
+      border-radius: 0;
+      background-color: #fff;
+      border: #fff;
+      content: '';
+      position: absolute;
+      left: 0;
+      z-index: 5;
+      content: '';
+      display: block;
+    }
+
+    #embla-slider--{{ block.id }} .embla__dots[data-type="scroll"] .embla__dot:after {
+      height: 100%;
+      width: 100%;
+      border-radius: 0;
+      background-color: #fff;
+      border: #fff;
+      opacity: 0.3;
+      content: '';
+      position: absolute;
+      left: 0;
+    }
+  {% else %}
+    #embla-slider--{{ block.id }} .embla__dots[data-type="scroll"] .embla__dot:after {
+      height: 100%;
+      width: 100%;
+      border-radius: 0;
+      background-color: #fff;
+      border: #fff;
+      opacity: 0.3;
+      content: '';
+      position: absolute;
+      left: 0;
+    }
+
+    #embla-slider--{{ block.id }} .embla__dots[data-type="scroll"] .embla__dot.is-selected:after {
+      opacity: 1;
+    }
+  {% endif %}
+
+  @keyframes fill {
+    from { width: 0%; }
+    to   { width: 100%; }
+  }
+
+  {% if block.settings.show_active %}
+    @media screen and (min-width: 750px) {
+      #embla-slide--{{ block.id }} .embla__slide[data-next="true"] {
+        background-color: #fff;
+      }
+    }
+    
+    @media screen and (max-width: 749px) {
+      #embla-slide--{{ block.id }} .embla__slide[data-selected="true"] {
+        background-color: #fff;
+      }
+    }
+  {% endif %}
+@media (max-width: 768px) {
+  .embla__slide .expanding_image {
+    display: flex;
+  }
+  .embla__slide .expanding_image > img {
+    aspect-ratio: 0.6;
+    object-fit: cover;
+  }
+
+  .embla__slide .expanding_image_content {
+    position: absolute;
+    bottom: 40px;
+    width: 100%;
+    padding: 20px;
+    z-index: 3;
+  }
+}
+
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Embla slider",
+  "tag": null,
+  "settings": [
+    {
+      "type": "range",
+      "id": "slides_count",
+      "label": "Slides count",
+      "min": 1,
+      "max": 50,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "t:settings.columns",
+      "min": 1,
+      "max": 11,
+      "step": 0.1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "mobile_columns",
+      "label": "t:settings.mobile_columns",
+      "min": 1,
+      "max": 3,
+      "step": 0.1,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "columns_gap",
+      "label": "t:settings.horizontal_gap",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "columns_gap_mobile",
+      "label": "Horizontal gap(mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "t:content.carousel_navigation"
+    },
+    {
+      "type": "select",
+      "id": "enable_navigation",
+      "label": "Show navigation",
+      "options": [
+        {
+          "value": "show-mobile",
+          "label": "Mobile only"
+        },
+        {
+          "value": "show-desktop",
+          "label": "Desktop only"
+        },
+        {
+          "value": "both",
+          "label": "Both"
+        }
+      ],
+      "default": "both"
+    },
+    {
+      "type": "select",
+      "id": "icons_style",
+      "label": "t:settings.navigation",
+      "options": [
+        {
+          "value": "arrow",
+          "label": "t:options.arrows"
+        },
+        {
+          "value": "chevron",
+          "label": "t:options.chevrons"
+        },
+        {
+          "value": "none",
+          "label": "t:options.none"
+        }
+      ],
+      "default": "arrow"
+    },
+    {
+      "type": "checkbox",
+      "id": "navigation_position",
+      "label": "Navigation Position Bottom",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "icons_shape",
+      "label": "t:settings.icon_background",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.none"
+        },
+        {
+          "value": "circle",
+          "label": "t:options.circle"
+        },
+        {
+          "value": "square",
+          "label": "t:options.square"
+        }
+      ],
+      "default": "none",
+      "visible_if": "{{ block.settings.icons_style != 'none' }}"
+    },
+    {
+      "type": "header",
+      "content": "Pagination"
+    },
+    {
+      "type": "select",
+      "id": "enable_pagination",
+      "label": "Show pagination",
+      "options": [
+        {
+          "value": "show-mobile",
+          "label": "Mobile only"
+        },
+        {
+          "value": "show-desktop",
+          "label": "Desktop only"
+        },
+        {
+          "value": "both",
+          "label": "Both"
+        }
+      ],
+      "default": "both"
+    },
+    {
+      "type": "select",
+      "id": "slideshow_controls_style",
+      "label": "Pagination style",
+      "options": [
+        {
+          "value": "dots",
+          "label": "t:options.dots"
+        },
+        {
+          "value": "scroll",
+          "label": "Scroll"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ],
+      "default": "dots"
+    },
+    {
+      "type": "range",
+      "id": "scroll_width",
+      "label": "Scroll width",
+      "min": 0,
+      "max": 200,
+      "step": 2,
+      "default": 60,
+      "unit": "px",
+      "visible_if": "{{ block.settings.slideshow_controls_style == 'scroll' }}"
+    },
+    {
+      "type": "range",
+      "id": "scroll_width_mobile",
+      "label": "Scroll width(mobile)",
+      "min": 0,
+      "max": 200,
+      "step": 2,
+      "default": 40,
+      "unit": "px",
+      "visible_if": "{{ block.settings.slideshow_controls_style == 'scroll' }}"
+    },
+    {
+      "type": "select",
+      "id": "pagination_position",
+      "label": "Pagination position",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": "bottom"
+    },
+    {
+      "type": "checkbox",
+      "id": "loop",
+      "label": "Loop",
+      "default": false,
+      "visible_if": "{{ block.settings.autoplay == false }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "t:settings.auto_rotate_slides",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "t:settings.speed",
+      "min": 3,
+      "max": 7,
+      "step": 1,
+      "unit": "s",
+      "default": 4,
+      "visible_if": "{{ block.settings.autoplay }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "slider_scale",
+      "label": "Scale",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_active",
+      "label": "Show active",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "change_bg_color",
+      "label": "Change background color",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Mobile Button Lable"
+    },
+    {
+      "type": "text",
+      "id": "coming_soon_btn",
+      "label": "Mobile coming soon Button Lable"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "embla__container__mobile_pb",
+      "label": "Embla Container Mobile padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start-mobile",
+      "label": "Top Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end-mobile",
+      "label": "Bottom Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start-mobile",
+      "label": "Left Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end-mobile",
+      "label": "Right Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    }
+  ],
+  "blocks": [
+    {
+      "type": "embla-slider-slide"
+    },    
+  ],
+  "presets": [
+    {
+      "name": "Embla slider",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

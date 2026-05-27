@@ -1,0 +1,369 @@
+{% style %}
+  #sticky-card--{{ block.id }} {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+  }
+
+  .sticky-card-{{ block.id }}-center {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
+  .sticky-card-{{ block.id }}-center p {
+    @media (max-width: 768px) {
+      text-align: center;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    #sticky-card--{{ block.id }} {
+      {% if block.settings.x_position == 50 and block.settings.y_position == 50 %}
+        transform: translate(-50%, -50%) !important;
+      {% elsif block.settings.x_position == 50 %}
+        transform: translateX(-50%) !important;
+      {% elsif block.settings.y_position == 50 %}
+        transform: translateY(-50%) !important;
+      {% endif %}
+
+      {% if block.settings.y_position == 50 %}
+        top: 50%;
+      {% else %}
+        {% if block.settings.y_reverse %}
+          bottom: {{ block.settings.y_position }}%;
+        {% else %}
+          top: {{ block.settings.y_position }}%;
+        {% endif %}
+      {% endif %}
+
+      {% if block.settings.x_position == 50 %}
+        left: 50%;
+      {% else %}
+        {% if block.settings.x_reverse %}
+          right: {{ block.settings.x_position }}%;
+        {% else %}
+          left: {{ block.settings.x_position }}%;
+        {% endif %}
+      {% endif %}
+      {% if block.settings.auto_width %}
+        width: auto;
+      {% else %}
+        max-width: {{ block.settings.max_width | times: 0.7 }}px;
+        width: 100%;
+      {% endif %}
+    }
+  }
+  @media (min-width: 1440px) {
+    #sticky-card--{{ block.id }} { 
+      {% if block.settings.auto_width %}
+        width: auto;
+      {% else %}
+        max-width: {{ block.settings.max_width }}px;
+        width: 100%;
+      {% endif %}
+    }
+  }
+  @media screen and (max-width: 767px) {
+
+    #sticky-card--{{ block.id }} {
+      {% if block.settings.x_position_mobile == 50 and block.settings.y_position_mobile == 50 %}
+        transform: translate(-50%, -50%) !important;
+      {% elsif block.settings.x_position_mobile == 50 %}
+        transform: translateX(-50%) !important;
+      {% elsif block.settings.y_position_mobile == 50 %}
+        transform: translateY(-50%) !important;
+      {% endif %}
+
+      {% if block.settings.y_position_mobile == 50 %}
+        top: 50%;
+      {% else %}
+        {% if block.settings.y_reverse_mobile %}
+          bottom: {{ block.settings.y_position_mobile }}%;
+        {% else %}
+          top: {{ block.settings.y_position_mobile }}%;
+        {% endif %}
+      {% endif %}
+
+      {% if block.settings.x_position_mobile == 50 %}
+        left: 50%;
+      {% else %}
+        {% if block.settings.x_reverse_mobile %}
+          right: {{ block.settings.x_position_mobile }}%;
+        {% else %}
+          left: {{ block.settings.x_position_mobile }}%;
+        {% endif %}
+      {% endif %}
+
+      {% if block.settings.auto_width %}
+        width: auto;
+      {% else %}
+        max-width: {{ block.settings.max_width_mobile }}px;
+        width: 100%;
+      {% endif %}
+    }
+  }
+
+  .sticky-card__rotate {
+    transition: transform 0.3s ease;
+    transform-origin: center center;
+  }
+{% endstyle %}
+
+<div
+  class="sticky-card {% if block.settings.enable_horizon_center %}sticky-card-{{ block.id }}-center {% endif %} {% if block.settings.enable_fixed %}sticky-card__fixed{% endif %} {% if block.settings.enable_rotate %}sticky-card__rotate{% endif %}{{ block.settings.visibility }} {% render 'animate', animation: block.settings.animation %}"
+  id="sticky-card--{{ block.id }}"
+>
+  {% content_for 'blocks' %}
+</div>
+
+<script>
+  var rotateInterval = null;
+
+  document.addEventListener("scroll", function () {
+    const fixedCards = document.querySelectorAll(".sticky-card__fixed:not(.sticky-card__rotate)");
+    const rotatingCard = document.querySelector(".sticky-card__rotate");
+
+    fixedCards.forEach(card => {
+      const parent = card.parentElement;
+      const parentRect = parent.getBoundingClientRect();
+      const cardHeight = card.offsetHeight;
+
+      const buffer = 200;
+      const isFixed = parentRect.top <= 0 && parentRect.bottom > cardHeight + buffer;
+      const isBottom = parentRect.bottom  <= cardHeight + buffer;
+      const isAbove = parentRect.top > 0;
+
+      // --- COMMON FIXED LOGIC (APPLIES TO BOTH ELEMENTS) ---
+      if (isFixed) {
+        card.style.position = "fixed";
+        card.style.top = "250px";
+      } 
+      else if (isBottom) {
+        card.style.position = "absolute";
+        card.style.top = (parent.offsetHeight - cardHeight - 300) + "px";
+      } 
+      else if (isAbove) {
+        card.style.position = "absolute";
+        card.style.top = "250px";
+      }
+    });
+
+    // --- ROTATION LOGIC (ONLY FOR rotatingCard) ---
+    if (rotatingCard) {
+      const parent = rotatingCard.parentElement;
+      const parentRect = parent.getBoundingClientRect();
+      const cardHeight = rotatingCard.offsetHeight;
+      
+      const buffer = 400;
+
+      const isFixed = parentRect.top <= 0 && parentRect.bottom - buffer > cardHeight;
+      const isBottom = parentRect.bottom - buffer <= cardHeight;
+      const isAbove = parentRect.top > 0;
+
+      const isMobile = window.innerWidth <= 768;
+
+      // 1️⃣ While fixed → swing rotate
+      if (isFixed) {
+        rotatingCard.style.position = "fixed";
+        rotatingCard.style.top = isMobile ? "250px" : "250px";
+        if (!rotateInterval) {
+          let direction = 1;
+          rotateInterval = setInterval(() => {
+            rotatingCard.style.setProperty(
+              "transform",
+              `translateX(-50%) rotate(${direction === 1 ? 0 : -50}deg)`,
+              "important"
+            );
+            direction *= -1;
+          }, 2000);
+        }
+      }
+      else if (isBottom) {
+        clearInterval(rotateInterval);
+        rotateInterval = null;
+        rotatingCard.style.transform = "rotate(-30deg)";     
+        rotatingCard.style.position = "absolute";
+        rotatingCard.style.top = (parent.offsetHeight - cardHeight - 150) + "px";
+      }
+      else if (isAbove) {
+        clearInterval(rotateInterval);
+        rotateInterval = null;
+        rotatingCard.style.transform = "rotate(0deg)";
+        rotatingCard.style.position = "absolute";
+        rotatingCard.style.top = isMobile ? "250px" : "250px";  // ← mobile-only top change
+      }
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Sticky card",
+  "tag": null,
+  "settings": [
+    {
+      "type": "select",
+      "id": "visibility",
+      "label": "t:content.visibility",
+      "options": [
+        {
+          "value": "",
+          "label": "Both"
+        },
+        {
+          "value": "hidden--mobile",
+          "label": "t:settings.desktop_only"
+        },
+        {
+          "value": "hidden--desktop",
+          "label": "t:settings.mobile_only"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "animation",
+      "label": "Trigger animation",
+      "default": "slide-in",
+      "options": [
+        {
+          "value": "",
+          "label": "None"
+        },
+        {
+          "value": "fade-in",
+          "label": "FadeIn"
+        },
+        {
+          "value": "slide-in",
+          "label": "SlideIn"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_horizon_center",
+      "label": "Enable Horizon Center",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_width",
+      "label": "Auto width",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 200,
+      "max": 1200,
+      "step": 10,
+      "label": "Max width",
+      "unit": "px",
+      "default": 320,
+      "visible_if": "{{ block.settings.auto_width == false }}"
+    },
+    {
+      "type": "range",
+      "id": "max_width_mobile",
+      "min": 125,
+      "max": 500,
+      "step": 5,
+      "label": "Mobile Max width",
+      "unit": "px",
+      "default": 320,
+      "visible_if": "{{ block.settings.auto_width == false }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_fixed",
+      "label": "Enable fixed",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_rotate",
+      "label": "Enable rotate",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Position"
+    },
+    {
+      "type": "checkbox",
+      "id": "x_reverse",
+      "label": "Horizontal reverse",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "x_position",
+      "min": 0,
+      "max": 100,
+      "label": "Horizontal",
+      "unit": "%",
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "y_reverse",
+      "label": "Vertical reverse",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "y_position",
+      "min": 0,
+      "max": 100,
+      "label": "Vertical",
+      "unit": "%",
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "x_reverse_mobile",
+      "label": "Horizontal reverse",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "x_position_mobile",
+      "min": 0,
+      "max": 100,
+      "label": "Mobile Horizontal",
+      "unit": "%",
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "y_reverse_mobile",
+      "label": "Vertical reverse",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "y_position_mobile",
+      "min": 0,
+      "max": 100,
+      "label": "Mobile Vertical",
+      "unit": "%",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@theme"
+    },
+    {
+      "type": "@app"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sticky card",
+      "category": "Basic"
+    }
+  ]
+}
+{% endschema %}

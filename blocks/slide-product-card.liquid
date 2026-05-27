@@ -1,0 +1,213 @@
+{% liquid
+  assign product = block.settings.selected_product
+  assign product_image = product.featured_image
+%}
+
+<div class="slide-product__card spacing-style" 
+ style="
+ --background-color: {{ block.settings.selected_product.metafields.custom.bg_color }};
+ {% render 'spacing-style', settings: block.settings %}
+ "
+ data-product-color="{{ block.settings.selected_product.metafields.custom.accent_color }}"
+>
+    <div class="slide-product__detail">
+        <div class="slide-product__title">
+            <h3>{{ block.settings.product_title }}</h3>
+        </div>
+        {% if block.settings.product_description != blank %}
+        <div class="slide-product__description">
+            {{ block.settings.product_description }}
+        </div>
+        {% endif %}
+        <div class="slide-product__button">
+            {% if block.settings.product_button_url != blank %}
+                <a href="{{ block.settings.product_button_url }}" class="button">{{ block.settings.product_button_label }}</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="slide-product__image">
+        {% if block.settings.selected_product != blank %}
+            {{ product_image | image_url: width: product_image.width, height: product_image.height | image_tag }}
+        {% endif %}
+    </div>
+</div>
+
+{% stylesheet %}
+  .slide-product-card {
+    height: 100%;
+  }
+
+  .slide-product__card {
+    background-color: var(--background-color);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .slide-product__detail {
+    padding: 55px;
+    display: flex;
+    flex-direction: column;
+    gap: 45px;
+  }
+
+  .slide-product__image {
+    margin-top: auto;
+    overflow: hidden;
+  }
+
+  @media screen and (max-width: 767px) {
+    .slide-product__detail {
+        padding: 48px 20px;
+    }
+
+    .slide-product__image img {
+        object-fit: contain;
+        width: 100%;
+        height: 108%;
+    }
+
+    .slide-product-card, 
+    .slide-product__card, 
+    .slide-product__image {
+        height: 100%;
+    }
+  }
+
+{% endstylesheet %}
+
+{% schema %}
+    {
+        "name": "Slide product card",
+        "class": "slide-product-card",
+        "settings": [
+            {
+                "type": "header",
+                "content": "Product media"
+            },
+            {
+                "type": "product",
+                "id": "selected_product",
+                "label": "Product"
+            },
+            {
+                "type": "header",
+                "content": "Product detail"
+            },
+            {
+                "type": "text",
+                "id": "product_title",
+                "label": "Title",
+                "default": "Product title"
+            },
+            {
+                "type": "richtext",
+                "id": "product_description",
+                "label": "Description",
+                "default": "<p>Description</p>"
+            },
+            {
+                "type": "text",
+                "id": "product_button_label",
+                "label": "Button label",
+                "default": "Shop Now"
+            },
+            {
+                "type": "url",
+                "id": "product_button_url",
+                "label": "Button url",
+            },
+            {
+                "type": "header",
+                "content": "t:content.padding"
+            },
+            {
+                "type": "range",
+                "id": "padding-block-start",
+                "label": "t:settings.top",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "padding-block-end",
+                "label": "t:settings.bottom",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "padding-inline-start",
+                "label": "t:settings.left",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "padding-inline-end",
+                "label": "t:settings.right",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "padding-block-start-mobile",
+                "label": "Top Mobile",
+                "min": -1,
+                "max": 99,
+                "step": 1,
+                "unit": "px",
+                "default": -1
+            },
+            {
+                "type": "range",
+                "id": "padding-block-end-mobile",
+                "label": "Bottom Mobile",
+                "min": -1,
+                "max": 99,
+                "step": 1,
+                "unit": "px",
+                "default": -1
+            },
+            {
+                "type": "range",
+                "id": "padding-inline-start-mobile",
+                "label": "Left Mobile",
+                "min": -1,
+                "max": 99,
+                "step": 1,
+                "unit": "px",
+                "default": -1
+            },
+            {
+                "type": "range",
+                "id": "padding-inline-end-mobile",
+                "label": "Right Mobile",
+                "min": -1,
+                "max": 99,
+                "step": 1,
+                "unit": "px",
+                "default": -1
+            }
+        ],
+        "presets": [
+            {
+                "name": "Slide product card",
+                "category": "Product"
+            },
+        ]
+        
+    }
+{% endschema %}

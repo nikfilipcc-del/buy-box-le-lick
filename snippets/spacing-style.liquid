@@ -1,0 +1,65 @@
+{%- doc -%}
+  Renders CSS variables for spacing (padding and margin) styles with responsive scaling.
+  Intended for blocks and sections that provide values for all the referenced settings.
+
+  @param {object} settings - The block or section settings object containing spacing values
+
+  @example
+  <div class="spacing-style" style="{% render 'spacing-style', settings: section.settings %}">
+{%- enddoc -%}
+{%- liquid
+  assign scale_min = 20
+  assign keys = 'padding-block-start,padding-block-end,padding-inline-start,padding-inline-end' | split: ','
+
+  assign padding_block_start_mobile = settings['padding-block-start-mobile'] | default: -1
+  assign padding_block_end_mobile = settings['padding-block-end-mobile'] | default: -1
+  assign padding_inline_start_mobile = settings['padding-inline-start-mobile'] | default: -1
+  assign padding_inline_end_mobile = settings['padding-inline-end-mobile'] | default: -1
+  if settings['padding-block-start'] and padding_block_start_mobile == -1
+    assign padding_block_start_mobile = settings['padding-block-start']
+  endif
+  if settings['padding-block-end'] and padding_block_end_mobile == -1
+    assign padding_block_end_mobile = settings['padding-block-end']
+  endif
+  if settings['padding-inline-start'] and padding_inline_start_mobile == -1
+    assign padding_inline_start_mobile = settings['padding-inline-start']
+  endif
+  if settings['padding-inline-end'] and padding_inline_end_mobile == -1
+    assign padding_inline_end_mobile = settings['padding-inline-end']
+  endif
+  if padding_block_start_mobile > -1
+    echo '--padding-block-start-mobile: ' | append: padding_block_start_mobile | append: 'px;'
+  endif
+  if padding_block_end_mobile > -1
+    echo '--padding-block-end-mobile: ' | append: padding_block_end_mobile | append: 'px;'
+  endif
+  if padding_inline_start_mobile > -1
+    echo '--padding-inline-start-mobile: ' | append: padding_inline_start_mobile | append: 'px;'
+  endif
+  if padding_inline_end_mobile > -1
+    echo '--padding-inline-end-mobile: ' | append: padding_inline_end_mobile | append: 'px;'
+  endif
+
+  for key in keys
+    assign value = settings[key]
+
+    if value != blank
+      echo '--'
+      echo key
+      echo ': '
+
+      if value > scale_min
+        echo 'max('
+        echo scale_min
+        echo 'px, calc(var(--spacing-scale) * '
+        echo value
+        echo 'px))'
+      else
+        echo value
+        echo 'px'
+      endif
+
+      echo ';'
+    endif
+  endfor
+-%}

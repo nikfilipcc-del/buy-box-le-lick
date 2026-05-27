@@ -1,0 +1,75 @@
+
+<div class="expanding_image">
+    <img
+        src="{{ block.settings.image | image_url }}"
+        width="120"
+        height="40"
+        alt="{{ 'gift_cards.issued.add_to_apple_wallet' | t }}"
+        loading="lazy"
+        class="main-image"
+    >
+    <span class="expanding_title">{{ block.settings.title }}</span>
+    <span class="expanding_content">{{ block.settings.content }}</span>
+    <div class="expanding_image_content">
+        <img
+        src="{{ block.settings.img_content | image_url }}"
+        width="120"
+        height="40"
+        alt="{{ 'gift_cards.issued.add_to_apple_wallet' | t }}"
+        loading="lazy"
+    >
+    </div>
+</div>
+
+{%  style %}
+  .expanding_image > img {
+    height: 450px;
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Expanding image",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Expanding Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "img_content",
+      "label": "Image content"
+    },
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "content"
+    },
+  ],
+  "blocks": [
+    {
+      "type": "@theme"
+    },
+    {
+      "type": "@app"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Expanding image",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

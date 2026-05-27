@@ -1,0 +1,229 @@
+{% liquid
+  assign product = block.settings.selected_product
+  assign product_image = product.featured_image
+%}
+
+<div class="hover-product__card">
+    <div class="hover-product__featured-image">
+        <a class="product-main__image">
+          {% if product_image != blank %}
+            {{ product_image | image_url: width: product_image.width, height: product_image.height | image_tag }}
+          {% endif %}
+        </a>
+        {% if block.settings.product_hover_image != blank %}
+          <a class="product-hover__image">
+            {{ block.settings.product_hover_image | image_url: width: block.settings.product_hover_image.width, height: block.settings.product_hover_image.height | image_tag: style: '--hover-top: -15%' }}
+          </a>
+        {% endif %}
+        {% if block.settings.button_label != blank %}
+          <div class="product-shop__button-desktop">
+            <a href="{{ block.settings.button_url }}" class="button">{{ block.settings.button_label }}</a>
+          </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if block.settings.title %}
+
+  {% style %}
+  .mb-slider-item--title-{{ block.id }} {
+    display: none;
+  }
+  @media (max-width: 768px) {
+
+    .product-main__image {
+          margin-bottom: -18px;
+    }
+   
+    .embla__slide[data-next="true"] .mb-slider-item--title-{{ block.id }} {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 30px;
+    }
+    .embla__slide[data-next="true"] .product-main__image img {
+        transform: translateY(33%);
+        transition: .5s cubic-bezier(0, 0, .4, 1);
+    }
+    .embla__slide[data-next="true"] .product-hover__image {
+        opacity: 1;
+        transition: .5s cubic-bezier(0, 0, .4, 1);
+    }
+  }
+  {% endstyle %}
+  <div class="mb-slider-item--title-{{ block.id }}">
+    <span class="mb-slider-item--title-text">{{ block.settings.title }}</span>
+  </div>
+{% endif %}
+
+{% stylesheet %}
+  .hover-product-card {
+    overflow: hidden;
+
+    @media (max-width: 749px) {
+      height: 100%;
+    }
+  }
+
+  .hover-product__card {
+    justify-content: center;
+    display: flex;
+  }
+
+  .product-main__image {
+    display: block;
+    position: relative;
+    z-index: 3;
+    transform: translateZ(0);
+    transition: 0.3s cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  .product-hover__image {
+    display: block;
+    opacity: 0;
+    transition: 0.3s cubic-bezier(0, 0, 0.2, 1);
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+  }
+
+  .product-hover__image img {
+    height: 100%;
+    object-fit: contain;
+    position: absolute;
+    top: var(--hover-top);
+  }
+
+  @media (min-width: 768px) {
+    .hover-product__featured-image:hover .product-hover__image,
+    .hover-product__featured-image:hover .product-shop__button-desktop {
+      opacity: 1;
+      transition: 0.3s cubic-bezier(0, 0, 0.2, 1);
+    }
+    .hover-product__featured-image:hover .product-main__image img {
+    transform: translateY(50%);
+    transition: 0.3s cubic-bezier(0, 0, 0.2, 1);
+  }
+  .hover-product__featured-image .product-main__image img {
+    transition: 0.3s cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  .hover-product__featured-image:hover .product-shop__button-desktop {
+    z-index: 3;
+  }
+  }
+
+
+  .hover-product__featured-image {
+    max-width: 228px;
+    width: 100%;
+    height: auto;
+    position: relative;
+    isolation: isolate;
+    z-index: 0;
+  }
+  
+  .product-shop__button-desktop {
+    position: absolute;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    top: 38%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    opacity: 0;
+    transition: 0.3s;
+  }
+
+  .product-shop__button-desktop a[href=""] {
+    background-color: var(--color-primary-button-hover-background) !important;
+    line-height: 1;
+  }
+
+  .product-shop__button-mobile {
+    justify-content: center;
+    display: flex;
+    padding-top: 42px;
+  }
+  .product-shop__button-mobile a {
+    padding-left: 10px;
+    padding-right: 10px
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-shop__button-desktop {
+      display: none;
+    }
+
+    .hover-product__featured-image {
+      max-width: 96px;
+    }
+    .mb-slider-item--title-text {
+      font-family: var(--font-h1--family);
+      font-size: 24px;
+      line-height: 90%;
+      letter-spacing: 0;
+    }
+    
+  }
+
+  @media screen and (min-width: 750px) {
+    .product-shop__button-mobile {
+      display: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+    {
+        "name": "Hover product card",
+        "class": "hover-product-card",
+        "settings": [
+            {
+              "type": "product",
+              "id": "selected_product",
+              "label": "Products"
+            },
+            {
+              "type": "image_picker",
+              "id": "product_hover_image",
+              "label": "Hover image"
+            },
+            {
+              "type": "range",
+              "id": "hover_img_position",
+              "min": 0,
+              "max": 100,
+              "step": 1,
+              "unit": "%",
+              "label": "Hover Image Position",
+              "default": 10
+            },
+            {
+              "type": "text",
+              "id": "button_label",
+              "label": "Label"
+            },
+            {
+              "type": "url",
+              "id": "button_url",
+              "label": "Link",
+            },
+            {
+              "type": "text",
+              "id": "title",
+              "label": "Title"
+            },
+        ],
+        "presets": [
+            {
+                "name": "Hover product card",
+                "category": "Product"
+            }
+        ]
+    }
+{% endschema %}

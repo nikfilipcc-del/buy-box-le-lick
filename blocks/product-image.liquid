@@ -1,0 +1,165 @@
+{% liquid
+  assign product = block.settings.selected_product
+  assign featured_image = product.featured_image
+%}
+
+<div class="product-image__container">
+    <div class="product-image__wrapper">
+        {%- unless product == blank -%}
+            {% if block.settings.product_image == blank %}
+                {{ featured_image | image_url: width: featured_image.width, height: featured_image.height | image_tag }}
+            {% else %}
+                {{ block.settings.product_image | image_url: width: block.settings.product_image.width, height: block.settings.product_image.height }}
+            {% endif %}
+        {%- endunless -%}
+    </div>
+    <div class="product-detail__wrapper" id="product-{{ block.id }}">
+        <div class="product-title__description">
+            <div class="product-detail__title"><h4>{{ block.settings.product_title_hover }}</h4></div>
+            {% if block.settings.product_description_hover != blank %}
+                <div class="product-detail__description">{{ block.settings.product_description_hover }}</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% stylesheet %}
+  .product-image__container {
+    display: flex;
+    flex-direction: column;
+    gap: 55px;
+  }
+
+  .product-image__wrapper {
+    justify-content: center;
+    display: flex;
+  }
+
+  .product-image__wrapper img {
+    max-width: 260px;
+    width: 100%;
+    height: 200px;
+  }
+
+  .product-image__title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    transform: translate(-50%, -50%);
+    width: fit-content;
+    text-align: center;
+    color: white;
+  }
+
+  .product-title__description {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .product-detail__title,
+  .product-title__description {
+    text-align: center;
+  }
+
+  .product-image__container:hover .product-image__title {
+    opacity: 0;
+    transition: 0.5s;
+  }
+
+  .arrow-down__button {
+    right: 6%;
+    bottom: 6%;
+    position: absolute;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 14px;
+  }
+
+  .icon-arrow__down {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-title__description {
+      gap: 18px;
+    }
+
+    .arrow-down__button {
+      padding: 7px;
+      top: 15%;
+      bottom: unset;
+      transform: rotate(-90deg);
+    }
+
+    .product-image__wrapper img {
+      max-width: 156px;
+      width: 100%;
+      height: 100px;
+    }
+
+    .product-image__container {
+      gap: 30px;
+    }
+  }
+{% endstylesheet %}
+
+{% style %}
+
+
+  @media screen and (max-width: 749px) {
+    #product-{{ block.id }}.product-detail__wrapper {
+      transform: translateY(0);
+      transition: 0.5s;
+      opacity: 1;
+    }
+
+    .product-image__title {
+      opacity: 0;
+      transition: 0.5s;
+    }
+  }
+{% endstyle %}
+
+{% schema %}
+    {
+        "name": "Product image",
+        "class": "product-image__block",
+        "settings": [
+            {
+                "type": "product",
+                "id": "selected_product",
+                "label": "Product",
+            },
+            {
+                "type": "image_picker",
+                "id": "product_image",
+                "label": "Image"
+            },
+            {
+                "type": "text",
+                "id": "product_title_hover",
+                "label": "Title(hover)",
+                "default": "Product title",
+            },
+            {
+                "type": "richtext",
+                "id": "product_description_hover",
+                "label": "Description(hover)",
+                "default": "<p>Description</p>"
+            },
+        ],
+        "presets": [
+            {
+                "name": "Product image",
+                "category": "Product"
+            }
+        ]
+    }
+{% endschema %}

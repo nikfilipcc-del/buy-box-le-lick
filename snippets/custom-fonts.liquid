@@ -1,0 +1,109 @@
+{% comment %} Custom Fonts {% endcomment %}
+{% if settings.custom_body_font %}
+  {{ 'BrandBodyFont.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+{% endif %}
+
+{% if settings.custom_heading_font %}
+  {{ 'BrandHeadingFont.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+{% endif %}
+
+{% if settings.custom_subheading_font %}
+  {{ 'BrandSubheadingFont.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+{% endif %}
+
+{% if settings.custom_accent_font %}
+  {{ 'BrandAccentFont.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+{% endif %}
+<style>
+  {% if settings.custom_body_font %}
+    @font-face {
+      font-family: BrandBodyFont;
+      src: url("{{ 'MDPrimer-Light.woff2' | asset_url }}") format('woff2');
+      font-style: normal;
+      font-weight: 300;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: BrandBodyFont;
+      src: url("{{ 'MDPrimer-LightItalic.woff2' | asset_url }}") format('woff2');
+      font-style: italic;
+      font-weight: 300;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: BrandBodyFont;
+      src: url("{{ 'MDPrimer-Italic.woff2' | asset_url }}") format('woff2');
+      font-style: italic;
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: BrandBodyFont;
+      src: url("{{ 'MDPrimer-Regular.woff2' | asset_url }}") format('woff2');
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+    }
+  {% endif %}
+
+  {% if settings.custom_heading_font %}
+    @font-face {
+      font-family: BrandHeadingFont;
+      src: url("{{ 'MDPrimer-Black.woff2' | asset_url }}") format('woff2');
+      font-style: normal;
+      font-weight: 800;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: BrandHeadingFont;
+      src: url("{{ 'MDPrimer-BlackItalic.woff2' | asset_url }}") format('woff2');
+      font-style: italic;
+      font-weight: 800;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: BrandHeadingFont;
+      src: url("{{ 'MDPrimer-Bold.woff2' | asset_url }}") format('woff2');
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: BrandHeadingFont;
+      src: url("{{ 'MDPrimer-BoldItalic.woff2' | asset_url }}") format('woff2');
+      font-style: italic;
+      font-weight: 700;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: BrandHeadingFont;
+      src: url("{{ 'MDPrimer-Semibold.woff2' | asset_url }}") format('woff2');
+      font-style: normal;
+      font-weight: 600;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: BrandHeadingFont;
+      src: url("{{ 'MDPrimer-SemiboldItalic.woff2' | asset_url }}") format('woff2');
+      font-style: italic;
+      font-weight: 600;
+      font-display: swap;
+    }
+  {% endif %}
+
+  {% if settings.custom_subheading_font %}
+    @font-face {
+      font-family: BrandSubheadingFont;
+      src: url("{{ 'BrandSubheadingFont.woff2' | asset_url }}") format('woff2');
+      font-display: swap;
+    }
+  {% endif %}
+
+  {% if settings.custom_accent_font %}
+    @font-face {
+      font-family: BrandAccentFont;
+      src: url("{{ 'BrandAccentFont.woff2' | asset_url }}") format('woff2');
+      font-display: swap;
+    }
+  {% endif %}
+</style>

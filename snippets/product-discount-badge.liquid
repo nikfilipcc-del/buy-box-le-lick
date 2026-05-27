@@ -1,0 +1,109 @@
+{% liquid
+    assign price = selected_variant.price
+    assign compare_at_price = selected_variant.compare_at_price
+
+    assign show_compare_price = false
+    if compare_at_price > price
+        assign show_compare_price = true
+    endif
+
+    assign discount_percentage = 0
+    assign discount_percentage_all = 0
+    assign discount_percent = 0
+    if customer and settings.global_discounts != blank
+        for global_discount in settings.global_discounts
+        if discount_percentage == 0
+            assign enable_conditions = global_discount.enable_conditions.value
+            assign disable_conditions = global_discount.disable_conditions.value
+            assign metafields_namespace = global_discount.metafields_namespace
+            assign metafields_key = global_discount.metafields_key
+
+            assign enable_values = ''
+            assign disable_values = ''
+
+            for enable_condition in enable_conditions
+            if forloop.first
+                assign enable_values = enable_condition.label
+            else
+                assign enable_values = enable_values | append: ',' | append: enable_condition.label
+            endif
+            endfor
+
+            assign enable_values = enable_values | split: ','
+
+            for disable_condition in disable_conditions
+            if forloop.first
+                assign disable_values = disable_condition.label
+            else
+                assign disable_values = disable_values | append: ',' | append: disable_condition.label
+            endif
+            endfor
+
+            assign disable_values = disable_values | split: ','
+
+            if enable_values contains customer.metafields[metafields_namespace][metafields_key]
+            unless disable_values contains customer.metafields[metafields_namespace][metafields_key]
+                assign discount_percentage = global_discount.discount_percentage.value | default: 0
+            endunless
+            endif
+
+            if enable_values.size == 0
+            unless disable_values contains customer.metafields[metafields_namespace][metafields_key]
+                assign discount_percentage_all = global_discount.discount_percentage.value | default: 0
+            endunless
+            endif
+        endif
+        endfor
+
+        if discount_percentage == 0 and discount_percentage_all > 0
+        assign discount_percentage = discount_percentage_all
+        endif
+
+        if discount_percentage > 0
+        assign compare_at_price = price
+        assign discount_percentage = 100 | minus: discount_percentage | divided_by: 100.0
+        assign discount_price = compare_at_price | times: discount_percentage
+        assign price = discount_price
+        assign show_compare_price = true
+        assign saving_price = compare_at_price | minus: price
+        assign discount_percent = saving_price | times: 100 | divided_by: compare_at_price | ceil
+        endif
+
+    endif
+
+    # Apply dev-only global discount if enabled and no other discount applied
+    if discount_percentage == 0 and settings.dev_global_discount_enabled
+        assign dev_percent = settings.dev_global_discount_percent | default: 0
+        if dev_percent > 0 and compare_at_price <= price
+        assign compare_at_price = price
+        assign discount_percentage = 100 | minus: dev_percent | divided_by: 100.0
+        assign discount_price = compare_at_price | times: discount_percentage
+        assign price = discount_price
+        assign show_compare_price = true
+        assign saving_price = compare_at_price | minus: price
+        assign discount_percent = saving_price | times: 100 | divided_by: compare_at_price | ceil
+        endif
+    endif
+%}
+
+{% if show_discount_badge and discount_percent > 0 %}
+    <span role="group">
+      <span
+        class="price-discount-badge color-{{ settings.badge_sale_color_scheme }}"
+        style="
+        --badge-padding-block: {{ settings.badge_padding_block }}px;
+        --badge-padding-inline: {{ settings.badge_padding_inline }}px;
+        --badge-padding-block-mobile: {{ settings.mobile_badge_padding_block }}px;
+        --badge-padding-inline-mobile: {{ settings.mobile_badge_padding_inline }}px;
+        --badge-border-radius: {{ settings.badge_corner_radius }}px;
+        --badge-font-family: var(--font-{{ settings.badge_font_family }}--family);
+        --badge-font-weight: {{ settings.badge_font_weight }};
+        --badge-text-transform: {{ settings.badge_text_transform }};
+        --badge-font-size: {{ settings.badge_font_size }}px;
+        --badge-font-size-mobile: {{ settings.mobile_badge_font_size }}px;
+        --badge-font-line-height: {{ settings.badge_font_line_height }}%;
+        --badge-font-letter-spacing: {{ settings.badge_font_letter_spacing | divided_by: 100.0 }}em;">
+        Save {{ discount_percent }}%
+      </span>
+    </span>
+{% endif %}

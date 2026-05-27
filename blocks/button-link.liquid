@@ -1,0 +1,316 @@
+<div id="custom-block--{{ block.id }}" class="custom-block__container spacing-style size-style color-{{ block.settings.color_scheme }}" 
+    style="
+    {% render 'spacing-style', settings: block.settings %} 
+    {% render 'size-style', settings: block.settings %}
+    {% if block.settings.enable_hover_state %}
+      --hover-bg-color: {{ block.settings.hover_bg_color }};
+      --hover-txt-color: {{ block.settings.hover_txt_color }};
+    {% endif %}
+    "
+    {% if block.settings.change_color %}
+     change-color
+    {% endif %}
+>
+    {%- if block.settings.link != blank -%}
+        <a
+        href="{{ block.settings.link }}"
+        class="custom-block__link"
+        ></a>
+    {%- endif -%}
+    <div class="custom-block__wrapper" 
+     style="
+     --gap:{{ block.settings.gap }}px;
+     --gap-mobile:{{ block.settings.gap_mobile }}px; 
+     --content-direction: {{ block.settings.content_direction }};
+     --content-direction-mobile: {{ block.settings.content_direction_mobile }};
+     ">
+        {% if block.settings.image != blank %}
+            <div class="custom-block__image">
+                {{ block.settings.image | image_url: width: block.settings.image.width, height: block.settings.image.height | image_tag }}
+            </div>
+        {% endif %}
+        <div class="custom-block__content"
+         style=
+         "
+            --text-align: {{ block.settings.alignment }};
+            --text-align-mobile: {{ block.settings.mobile_alignment }};
+         "
+        >{{ block.settings.content }}</div>
+    </div>
+</div>
+
+{% stylesheet %}
+  .custom-block__container {
+    position: relative;
+  }
+
+  .custom-block__link {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+  }
+
+  .custom-block__wrapper {
+    display: flex;
+    flex-direction: var(--content-direction);
+    gap: var(--gap);
+  }
+
+  .custom-block__content {
+    text-transform: uppercase;
+  }
+
+  .custom-block__content > * {
+    margin: 0;
+  }
+
+  .custom-block__content > ul {
+    padding-left: 18px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .custom-block__content {
+        text-align: var(--text-align-mobile);
+    }
+
+    .custom-block__wrapper {
+        flex-direction: var(--content-direction-mobile);
+        gap: var(--gap-mobile);
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    .custom-block__content {
+        text-align: var(--text-align);
+        min-width: 103px;
+    }
+  }
+{% endstylesheet %}
+
+{% style %}
+  {% if block.settings.enable_hover_state %}
+    #custom-block--{{ block.id }}.custom-block__container:hover {
+        background-color: var(--hover-bg-color);
+        color: var(--hover-txt-color);
+    }
+  {% endif %}
+{% endstyle %}
+
+{% schema %}
+    {
+        "name": "Custom block",
+        "class": "custom-block",
+        "settings": [
+            {
+                "type": "header",
+                "content": "Appearance"
+            },
+            {
+                "type": "color_scheme",
+                "id": "color_scheme",
+                "label": "Color scheme",
+                "default": "scheme-1",
+            },
+            {
+                "type": "image_picker",
+                "id": "image",
+                "label": "Image"
+            },
+            {
+                "type": "richtext",
+                "id": "content",
+                "label": "Content",
+                "default": "<p>Shop All Products</p>"
+            },
+            {
+                "type": "text_alignment",
+                "id": "alignment",
+                "label": "t:settings.alignment",
+                "default": "left",
+            },
+            {
+                "type": "text_alignment",
+                "id": "mobile_alignment",
+                "label": "Mobile alignment",
+                "default": "left",
+            },
+            {
+                "type": "header",
+                "content": "Layout"
+            },
+            {
+                "type": "select",
+                "id": "content_direction",
+                "label": "t:settings.direction",
+                "options": [
+                    {
+                    "value": "column",
+                    "label": "t:options.vertical"
+                    },
+                    {
+                    "value": "row",
+                    "label": "t:options.horizontal"
+                    }
+                ],
+                "default": "column"
+            },
+            {
+                "type": "select",
+                "id": "content_direction_mobile",
+                "label": "t:settings.direction",
+                "options": [
+                    {
+                    "value": "column",
+                    "label": "t:options.vertical"
+                    },
+                    {
+                    "value": "row",
+                    "label": "t:options.horizontal"
+                    }
+                ],
+                "default": "column"
+            },
+            {
+                "type": "range",
+                "id": "gap",
+                "label": "Gap",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "gap_mobile",
+                "label": "Gap",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "url",
+                "id": "link",
+                "label": "t:settings.link"
+            },
+            {
+                "type": "checkbox",
+                "id": "change_color",
+                "label": "Change color",
+                "default": false
+            },
+            {
+                "type": "checkbox",
+                "id": "enable_hover_state",
+                "label": "Enable hover state",
+                "default": false,
+            },
+            {
+                "type": "color",
+                "id": "hover_bg_color",
+                "label": "Hover background",
+                "visible_if": "{{ block.settings.enable_hover_state }}"
+            },
+            {
+                "type": "color",
+                "id": "hover_txt_color",
+                "label": "Hover text color",
+                "visible_if": "{{ block.settings.enable_hover_state }}"
+            },
+            {
+                "type": "header",
+                "content": "t:content.padding"
+            },
+            {
+                "type": "range",
+                "id": "padding-block-start",
+                "label": "t:settings.top",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "padding-block-end",
+                "label": "t:settings.bottom",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "padding-inline-start",
+                "label": "t:settings.left",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "padding-inline-end",
+                "label": "t:settings.right",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "padding-block-start-mobile",
+                "label": "Top Mobile",
+                "min": -1,
+                "max": 99,
+                "step": 1,
+                "unit": "px",
+                "default": -1
+            },
+            {
+                "type": "range",
+                "id": "padding-block-end-mobile",
+                "label": "Bottom Mobile",
+                "min": -1,
+                "max": 99,
+                "step": 1,
+                "unit": "px",
+                "default": -1
+            },
+            {
+                "type": "range",
+                "id": "padding-inline-start-mobile",
+                "label": "Left Mobile",
+                "min": -1,
+                "max": 99,
+                "step": 1,
+                "unit": "px",
+                "default": -1
+            },
+            {
+                "type": "range",
+                "id": "padding-inline-end-mobile",
+                "label": "Right Mobile",
+                "min": -1,
+                "max": 99,
+                "step": 1,
+                "unit": "px",
+                "default": -1
+            }
+        ],
+        "presets": [
+            {
+                "name": "Custom block",
+                "category": "Custom"
+            }
+        ]
+    }
+{% endschema %}

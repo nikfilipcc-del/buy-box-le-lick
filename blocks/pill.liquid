@@ -1,0 +1,530 @@
+<div 
+ class="pill-icon__text border-style {{ block.settings.visibility }}"
+ style="
+  --pill-padding-top: {{ block.settings.pill_padding_top }}px;
+  --pill-padding-bottom: {{ block.settings.pill_padding_bottom }}px;
+  --pill-padding-left: {{ block.settings.pill_padding_left }}px;
+  --pill-padding-right: {{ block.settings.pill_padding_right }}px;
+  --pill-padding-top--mobile: {{ block.settings.pill_padding_top_mobile }}px;
+  --pill-padding-bottom--mobile: {{ block.settings.pill_padding_bottom_mobile }}px;
+  --pill-padding-left--mobile: {{ block.settings.pill_padding_left_mobile }}px;
+  --pill-padding-right--mobile: {{ block.settings.pill_padding_right_mobile }}px;
+  {% render 'border-override', settings: block.settings %}
+ "
+>
+    <div class="pill-icon ">
+        {% if block.settings.pill_icon == 'open' %}
+            {% render 'icon-open', block: block %}
+        {% else %}
+            {% render 'icon-close', block: block %}
+        {% endif %}
+    </div>
+    <div class="pill-text">
+        {% render 'text', block: block %}
+    </div>
+</div>
+
+{% stylesheet %}
+  .pill-icon__text {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  @media screen and (max-width: 767px) {
+    .pill-icon__text {
+        gap: 18px;
+        padding: var(--pill-padding-top--mobile) var(--pill-padding-left--mobile) var(--pill-padding-bottom--mobile) var(--pill-padding-right--mobile);
+    }
+  }
+
+  @media screen and (min-width: 768px) {
+    .pill-icon__text {
+        gap: 12px;
+        padding: var(--pill-padding-top) var(--pill-padding-left) var(--pill-padding-bottom) var(--pill-padding-right);
+    }
+  }
+{% endstylesheet %}
+
+
+{% schema %}
+    {
+        "name": "pill",
+        "class": "pill-block",
+        "settings": [
+             {
+                "type": "select",
+                "id": "visibility",
+                "label": "t:content.visibility",
+                "options": [
+                    {
+                    "value": "",
+                    "label": "Both"
+                    },
+                    {
+                    "value": "hidden--mobile",
+                    "label": "t:settings.desktop_only"
+                    },
+                    {
+                    "value": "hidden--desktop",
+                    "label": "t:settings.mobile_only"
+                    }
+            ]
+            },
+            {
+                "type": "select",
+                "id": "pill_icon",
+                "options": [
+                    {
+                        "value": "open",
+                        "label": "Open"
+                    },
+                    {
+                        "value": "close",
+                        "label": "Close"
+                    },
+                ],
+                "label": "Icon",
+                "default": "open"
+            },
+            {
+              "type": "color",
+              "id": "icon_color",
+              "label": "Icon Color",
+              "default": "#000000"
+            },
+            {
+                "type": "richtext",
+                "id": "text",
+                "label": "t:settings.text"
+            },
+            {
+                "type": "header",
+                "content": "t:content.layout"
+            },
+            {
+                "type": "select",
+                "id": "width",
+                "label": "t:settings.width",
+                "options": [
+                    {
+                    "value": "fit-content",
+                    "label": "t:options.fit"
+                    },
+                    {
+                    "value": "100%",
+                    "label": "t:options.fill"
+                    }
+                ],
+                "default": "fit-content"
+            },
+            {
+                "type": "select",
+                "id": "max_width",
+                "label": "t:settings.max_width",
+                "options": [
+                    {
+                    "value": "narrow",
+                    "label": "t:options.narrow"
+                    },
+                    {
+                    "value": "normal",
+                    "label": "t:options.normal"
+                    },
+                    {
+                    "value": "none",
+                    "label": "t:options.none"
+                    }
+                ],
+                "default": "normal"
+            },
+            {
+                "type": "text_alignment",
+                "id": "alignment",
+                "label": "t:settings.alignment",
+                "default": "left",
+                "visible_if": "{{ block.settings.width == '100%' }}"
+            },
+            {
+                "type": "header",
+                "content": "t:content.typography"
+            },
+            {
+                "type": "select",
+                "id": "type_preset",
+                "label": "t:settings.preset",
+                "options": [
+                    {
+                    "value": "rte",
+                    "label": "t:options.default"
+                    },
+                    {
+                    "value": "paragraph",
+                    "label": "t:options.paragraph"
+                    },
+                    {
+                    "value": "body1",
+                    "label": "t:options.body1"
+                    },
+                    {
+                    "value": "body2",
+                    "label": "t:options.body2"
+                    },
+                    {
+                    "value": "h1",
+                    "label": "t:options.h1"
+                    },
+                    {
+                    "value": "h2",
+                    "label": "t:options.h2"
+                    },
+                    {
+                    "value": "h3",
+                    "label": "t:options.h3"
+                    },
+                    {
+                    "value": "h4",
+                    "label": "t:options.h4"
+                    },
+                    {
+                    "value": "h5",
+                    "label": "t:options.h5"
+                    },
+                    {
+                    "value": "h6",
+                    "label": "t:options.h6"
+                    },
+                    {
+                    "value": "custom",
+                    "label": "t:options.custom"
+                    }
+                ],
+                "default": "rte",
+                "info": "t:info.edit_presets_in_theme_settings"
+            },
+            {
+                "type": "select",
+                "id": "font",
+                "label": "t:settings.font",
+                "options": [
+                    {
+                    "value": "var(--font-body--family)",
+                    "label": "t:options.body"
+                    },
+                    {
+                    "value": "var(--font-subheading--family)",
+                    "label": "t:options.subheading"
+                    },
+                    {
+                    "value": "var(--font-heading--family)",
+                    "label": "t:options.heading"
+                    },
+                    {
+                    "value": "var(--font-accent--family)",
+                    "label": "t:options.accent"
+                    },
+                    {
+                    "value": "var(--font-nav--family)",
+                    "label": "t:options.nav"
+                    }
+                ],
+                "default": "var(--font-body--family)",
+                "visible_if": "{{ block.settings.type_preset == 'custom' }}"
+            },
+            {
+                "type": "range",
+                "id": "font_size",
+                "label": "t:settings.size",
+                "min": 10,
+                "max": 48,
+                "step": 2,
+                "unit": "px",
+                "default": 16,
+                "visible_if": "{{ block.settings.type_preset == 'custom' }}"
+            },
+            {
+                "type": "range",
+                "id": "font_size_mobile",
+                "label": "t:settings.size_mobile",
+                "min": 10,
+                "max": 48,
+                "step": 2,
+                "unit": "px",
+                "default": 14,
+                "visible_if": "{{ block.settings.type_preset == 'custom' }}"
+            },
+            {
+                "type": "select",
+                "id": "weight",
+                "label": "t:settings.weight",
+                "default": "400",
+                "options": [
+                    {
+                    "value": "100",
+                    "label": "100"
+                    },
+                    {
+                    "value": "200",
+                    "label": "200"
+                    },
+                    {
+                    "value": "300",
+                    "label": "300"
+                    },
+                    {
+                    "value": "400",
+                    "label": "400"
+                    },
+                    {
+                    "value": "500",
+                    "label": "500"
+                    },
+                    {
+                    "value": "600",
+                    "label": "600"
+                    },
+                    {
+                    "value": "700",
+                    "label": "700"
+                    },
+                    {
+                    "value": "800",
+                    "label": "800"
+                    },
+                    {
+                    "value": "900",
+                    "label": "900"
+                    }
+                ],
+                "visible_if": "{{ block.settings.type_preset == 'custom' }}"
+            },
+            {
+                "type": "range",
+                "id": "line_height",
+                "label": "t:settings.line_height",
+                "default": 160,
+                "min": 0,
+                "max": 200,
+                "step": 2,
+                "unit": "%",
+                "visible_if": "{{ block.settings.type_preset == 'custom' }}"
+            },
+            {
+                "type": "range",
+                "id": "letter_spacing",
+                "label": "t:settings.letter_spacing",
+                "default": 0,
+                "min": -50,
+                "max": 50,
+                "step": 1,
+                "unit": "%",
+                "visible_if": "{{ block.settings.type_preset == 'custom' }}"
+                },
+                {
+                "type": "select",
+                "id": "case",
+                "label": "t:settings.case",
+                "options": [
+                    {
+                    "value": "none",
+                    "label": "t:options.default"
+                    },
+                    {
+                    "value": "uppercase",
+                    "label": "t:options.uppercase"
+                    }
+                ],
+                "default": "none",
+                "visible_if": "{{ block.settings.type_preset == 'custom' }}"
+            },
+            {
+                "type": "select",
+                "id": "wrap",
+                "label": "t:settings.wrap",
+                "options": [
+                    {
+                    "value": "pretty",
+                    "label": "t:options.pretty"
+                    },
+                    {
+                    "value": "balance",
+                    "label": "t:options.balance"
+                    },
+                    {
+                    "value": "nowrap",
+                    "label": "t:options.none"
+                    }
+                ],
+                "visible_if": "{{ block.settings.type_preset == 'custom' }}"
+            },
+            {
+                "type": "select",
+                "id": "color",
+                "label": "t:settings.color",
+                "options": [
+                    {
+                    "value": "var(--color-foreground)",
+                    "label": "t:options.text"
+                    },
+                    {
+                    "value": "var(--color-foreground-heading)",
+                    "label": "t:options.heading"
+                    },
+                    {
+                    "value": "var(--color-primary)",
+                    "label": "t:options.link"
+                    }
+                ],
+                "default": "var(--color-foreground)",
+                "visible_if": "{{ block.settings.type_preset != 'rte' }}"
+            },
+            {
+                "type": "header",
+                "content": "t:content.appearance"
+            },
+            {
+                "type": "checkbox",
+                "id": "pill_background",
+                "label": "t:settings.background",
+                "default": false
+            },
+            {
+                "type": "select",
+                "id": "border",
+                "label": "t:settings.borders",
+                "options": [
+                    {
+                    "value": "none",
+                    "label": "t:options.none"
+                    },
+                    {
+                    "value": "solid",
+                    "label": "t:options.solid"
+                    }
+                ],
+                "default": "none"
+            },
+            {
+                "type": "range",
+                "id": "border_width",
+                "min": 0,
+                "max": 10,
+                "step": 0.5,
+                "unit": "px",
+                "label": "t:settings.border_width",
+                "default": 1,
+                "visible_if": "{{ block.settings.border != 'none' }}"
+            },
+            {
+                "type": "range",
+                "id": "border_opacity",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "%",
+                "label": "t:settings.border_opacity",
+                "default": 100,
+                "visible_if": "{{ block.settings.border != 'none' }}"
+            },
+            {
+                "type": "range",
+                "id": "border_radius",
+                "label": "t:settings.border_radius",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "header",
+                "content": "t:content.padding"
+            },
+            {
+                "type": "range",
+                "id": "pill_padding_top",
+                "label": "t:settings.top",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "pill_padding_bottom",
+                "label": "t:settings.bottom",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "pill_padding_left",
+                "label": "t:settings.left",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "pill_padding_right",
+                "label": "t:settings.right",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "pill_padding_top_mobile",
+                "label": "Top Mobile",
+                "min": 0,
+                "max": 99,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "pill_padding_bottom_mobile",
+                "label": "Bottom Mobile",
+                "min": 0,
+                "max": 99,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "pill_padding_left_mobile",
+                "label": "Left Mobile",
+                "min": 0,
+                "max": 99,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "pill_padding_right_mobile",
+                "label": "Right Mobile",
+                "min": 0,
+                "max": 99,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            }
+        ],
+        "presets": [
+            {
+                "name": "pill"
+            }
+        ]
+    }
+{% endschema %}

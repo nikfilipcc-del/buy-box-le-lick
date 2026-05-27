@@ -1,0 +1,142 @@
+
+	<div class="expanding_image-container">
+		{% content_for 'blocks' %}
+	</div>
+
+{%  style  %} 
+    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap");
+
+
+.expanding_img {
+	max-width: 100%;
+	border-radius: 1rem;
+	cursor: pointer;
+}
+
+.expanding_image-container {
+	display: flex;
+    max-width: 100%;
+    width: 100%;
+}
+
+.expanding_image-container .expanding_image {
+	position: relative;
+	width: calc(100% / 6);
+	height: 800px;
+	transition: 0.7s cubic-bezier(0.05, 0.61, 0.41, 0.95);
+}
+
+.expanding_image-container .expanding_image .main-image {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: 0.5s cubic-bezier(0.05, 0.61, 0.41, 0.95);
+}
+
+.expanding_image-container .expanding_image_content {
+	display: inline-block;
+	position: absolute;
+    left: 30%;
+	bottom: 150px;
+	padding: 0.7rem 1rem;
+	border-radius: 100vw;
+	color: #fff;
+	font-size: 1.2rem;
+	transform: scale(0);
+	transition: 0.5s cubic-bezier(0.05, 0.61, 0.41, 0.95) 0.3s;
+	z-index: 3;
+}
+
+.expanding_image-container .active {
+	width: calc(100% / 3);
+}
+.expanding_image-container .active .expanding_image_content {
+	transform: scale(1);
+}
+.expanding_title {
+	position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+	text-align: center;
+	width: 100%;
+	z-index: 3;
+}
+.expanding_title > * {
+	text-transform: uppercase;
+    color: white;
+	font-weight: 800;
+}
+.expanding_content {
+	position: absolute;
+	top: 70%;
+    text-align: center;
+    width: 100%;
+	z-index: 3;
+}
+.expanding_content > * {
+	color: white;
+}
+.expanding_image-container .active .expanding_content {
+	display: none;
+}
+.expanding_image::after {
+	content: "";
+	background: linear-gradient(180deg, rgb(0 0 0 / 59%) 0%, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0) 30%, rgb(0 0 0 / 78%) 100%);
+	position: absolute;
+	top: 0;
+	width: 100%;
+	height: 100%;
+}
+
+/* @media (max-width: 576px) {
+	.expanding_image-container {
+		flex-direction: column;
+		max-width: 2000px;
+		width: 100%;
+		height: 400px;
+	}
+
+	.expanding_image-container .expanding_image {
+		width: 100%;
+		height: 60px;
+		transition: height 0.5s ease-in-out;
+	}
+
+	.expanding_image-container .expanding_image img {
+		width: 100%;
+		height: 100%;
+	}
+
+	.expanding_image-container .active {
+		height: 400px;
+	}
+} */
+
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Expanding images",
+  "tag": null,
+  "settings": [
+  ],
+  "blocks": [
+    {
+      "type": "@theme"
+    },
+    {
+      "type": "@app"
+    },
+    {
+      "type": "expanding_image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "expanding Images",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

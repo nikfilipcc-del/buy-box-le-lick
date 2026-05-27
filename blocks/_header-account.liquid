@@ -1,0 +1,133 @@
+{% if shop.customer_accounts_enabled %}
+  {% render 'account-popover' %}
+  {% render 'account-drawer' %}
+{% endif %}
+
+{% style %}
+  .account-button__text {
+    font-family: var(--font-{{ block.settings.type_font_primary_link }}--family);
+    font-size: {{ block.settings.type_font_primary_size }};
+    font-style: var(--font-{{ block.settings.type_font_primary_link }}--style);
+    font-weight: var(--font-{{ block.settings.type_font_primary_link }}--weight);
+    line-height: var(--menu-font-sm--line-height);
+    text-transform: {%- if block.settings.type_case_primary_link == 'uppercase' %}uppercase{% else %}none{% endif -%};
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Account",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:content.manage_customer_accounts"
+    },
+    {
+      "type": "select",
+      "id": "account_icon_type",
+      "label": "Icon type",
+      "options": [
+        {
+          "value": "icon",
+          "label": "Icon"
+        },
+        {
+          "value": "text",
+          "label": "Text"
+        }
+      ],
+      "default": "icon"
+    },
+    {
+      "type": "text",
+      "id": "account_icon_text",
+      "label": "Text",
+      "default": "Account",
+      "visible_if": "{{ block.settings.account_icon_type == 'text' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.typography"
+    },
+    {
+      "type": "select",
+      "id": "type_font_primary_size",
+      "label": "t:settings.top_level_size",
+      "options": [
+        {
+          "value": "0.625rem",
+          "label": "10px"
+        },
+        {
+          "value": "0.75rem",
+          "label": "12px"
+        },
+        {
+          "value": "0.875rem",
+          "label": "14px"
+        },
+        {
+          "value": "1rem",
+          "label": "16px"
+        },
+        {
+          "value": "1.125rem",
+          "label": "18px"
+        }
+      ],
+      "default": "1rem"
+    },
+    {
+      "type": "select",
+      "id": "type_font_primary_link",
+      "label": "t:settings.font",
+      "options": [
+        {
+          "value": "body",
+          "label": "t:options.body"
+        },
+        {
+          "value": "subheading",
+          "label": "t:options.subheading"
+        },
+        {
+          "value": "heading",
+          "label": "t:options.heading"
+        },
+        {
+          "value": "accent",
+          "label": "t:options.accent"
+        },
+        {
+          "value": "nav",
+          "label": "t:options.nav"
+        }
+      ],
+      "default": "heading"
+    },
+    {
+      "type": "select",
+      "id": "type_case_primary_link",
+      "label": "t:settings.text_case",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.default"
+        },
+        {
+          "value": "uppercase",
+          "label": "t:options.uppercase"
+        }
+      ],
+      "default": "none"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Account",
+      "category": "Header"
+    }
+  ]
+}
+{% endschema %}

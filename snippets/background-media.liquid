@@ -1,0 +1,39 @@
+{%- doc -%}
+  Renders a background media
+
+  @param {string} [background_media] - The background media
+  @param {object} [background_video] - The background video
+  @param {string} [background_video_position] - The background video position
+  @param {object} [background_image] - The background image
+  @param {string} [background_image_position] - The background image position
+  @param {string} [placeholder] - The placeholder
+  @param {object} [hover_background_image] - The background image
+  @param {string} [hover_background_image_position] - The background image position
+
+  @example
+  {% render 'background-media', background_media: background_media, background_video: background_video, background_video_position: background_video_position, background_image: background_image, background_image_position: background_image_position, placeholder: placeholder %}
+{%- enddoc -%}
+
+{% liquid
+  assign desktop_class = ''
+  if background_media_mobile != 'none'
+    if background_image_mobile != blank or background_video_mobile != blank
+      assign desktop_class = 'hidden--mobile'
+    endif
+  endif
+  if background_media == 'video'
+    render 'background-video', background_video: background_video, background_video_position: background_video_position, placeholder: placeholder, classes: desktop_class
+  elsif background_media == 'image'
+    render 'background-image', background_image: background_image, background_image_mobile:background_image_mobile, background_image_position: background_image_position, placeholder: placeholder, classes: desktop_class
+  endif
+  if background_media != 'none' and hover_background_image != blank
+    render 'background-image', background_image: hover_background_image, background_image_position: hover_background_image_position, placeholder: placeholder, classes: 'hidden--mobile hover-background-image'
+  endif
+  if background_media_mobile != 'none'
+    if background_media_mobile == 'video'
+      render 'background-video', background_video: background_video_mobile, background_video_position: background_video_position_mobile, placeholder: placeholder, classes: 'hidden--desktop'
+    elsif background_media_mobile == 'image'
+      render 'background-image', background_image: background_image_mobile, background_image_position: background_image_position_mobile, placeholder: placeholder, classes: 'hidden--desktop'
+    endif
+  endif
+%}

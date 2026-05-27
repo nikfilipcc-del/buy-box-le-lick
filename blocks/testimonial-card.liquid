@@ -1,0 +1,302 @@
+<div class="testimonial-card__container spacing-style color-{{ block.settings.color_scheme }} border-style"
+ style="
+    {% render 'spacing-style', settings: block.settings %}
+    {% render 'border-override', settings: block.settings %}
+    --bg-blur: {{ block.settings.bg_blur }}px;
+ "
+>
+    <div class="testimonial-card__wrapper">
+        <div class="card-detail__wrapper">
+            <div class="card-review__wrapper">
+                <img src="{{ block.settings.icon |  image_url: width: "100" }}">
+            </div>
+            <div class="card-review__title"><h4>{{ block.settings.title }}</h4></div>
+            <div class="card-review__content">{{ block.settings.content }}</div>
+        </div>
+        <div class="testimonial-card___spacer"></div>
+        <div class="card-info__wrapper">
+            <div class="card-info__name"><p>{{ block.settings.name }}</p></div>
+            <div class="card-info__description"><p>{{ block.settings.description }}</p></div>
+        </div>
+    </div>
+</div>
+
+{% stylesheet %}
+  .testimonial-card {
+    height: 100%;
+  }
+  .testimonial-card__container {
+    backdrop-filter: blur(var(--bg-blur));
+    background: rgba(255,255,255,0.067);
+    -webkit-backdrop-filter: blur(var(--bg-blur));
+    height: 100%;
+  }
+  .card-review__wrapper img {
+    width: 100px;
+  }
+
+  .card-detail__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  .testimonial-card__wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .card-review__title h4 {
+    text-transform: uppercase;
+    font-weight: 800;
+  }
+
+  .card-info__name p {
+    font-weight: 700;
+    font-style: Bold;
+    font-size: 24px;
+    line-height: 130%;
+    letter-spacing: 0%;
+    @media (max-width: 768px) {
+        font-size: 16px;
+    }
+  }
+
+  .card-info__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .testimonial-card___spacer {
+    height: 100px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .card-detail__wrapper {
+        gap: 18px;
+    }
+
+    .testimonial-card___spacer {
+        height: 64px;
+    }
+  }
+{% endstylesheet %}
+
+
+{% schema %}
+    {
+        "name": "Testimonial card",
+        "class": "testimonial-card",
+        "settings": [
+            {
+                "type": "header",
+                "content": "Appearance"
+            },
+            {
+                "type": "color_scheme",
+                "id": "color_scheme",
+                "label": "t:settings.color_scheme",
+                "default": "scheme-1",
+            },
+            {
+                "type": "range",
+                "min": 0,
+                "max": 100,
+                "unit": "px",
+                "default": 0,
+                "id": "bg_blur",
+                "label": "Blur"
+            },
+            {
+                "type": "select",
+                "id": "border",
+                "label": "t:settings.borders",
+                "options": [
+                    {
+                    "value": "none",
+                    "label": "t:options.none"
+                    },
+                    {
+                    "value": "solid",
+                    "label": "t:options.solid"
+                    }
+                ],
+                "default": "none"
+            },
+            {
+                "type": "range",
+                "id": "border_width",
+                "min": 0,
+                "max": 10,
+                "step": 0.5,
+                "unit": "px",
+                "label": "t:settings.border_width",
+                "default": 1,
+                "visible_if": "{{ block.settings.border != 'none' }}"
+            },
+            {
+                "type": "range",
+                "id": "border_opacity",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "%",
+                "label": "t:settings.border_opacity",
+                "default": 100,
+                "visible_if": "{{ block.settings.border != 'none' }}"
+            },
+            {
+                "type": "range",
+                "id": "border_radius",
+                "label": "t:settings.border_radius",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "checkbox",
+                "id": "enable_aspect_ratio",
+                "label": "Enable aspect ratio",
+                "default": false
+            },
+            {
+                "type": "range",
+                "id": "aspect_ratio",
+                "label": "Aspect ratio",
+                "min": 0,
+                "max": 200,
+                "step": 2,
+                "unit": "%",
+                "default": 100,
+                "visible_if": "{{ block.settings.enable_aspect_ratio }}"
+            },
+            {
+                "type": "header",
+                "content": "Content"
+            },
+            {
+              "type": "image_picker",
+              "id": "icon",
+              "label": "Icon"
+            },
+            {
+                "type": "text",
+                "id": "title",
+                "label": "Title",
+                "default":"get a refreshing boost without feeling heavy"
+            },
+            {
+                "type": "richtext",
+                "id": "content",
+                "label": "Content",
+                "default":"<p>Whether I'm mid-workout, out at a festival, or just trying to stay sharp, they're a fun and easy way to fuel up.</p>"
+            },
+            {
+                "type": "text",
+                "id": "name",
+                "label": "Name",
+                "default": "Alex Tristan"
+            },
+            {
+                "type": "text",
+                "id": "description",
+                "label": "Description",
+                "default": "Fitness Coach & Wellness Enthusiast"
+            },
+            {
+                "type": "header",
+                "content": "t:content.padding"
+            },
+            {
+                "type": "range",
+                "id": "padding-block-start",
+                "label": "t:settings.top",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "padding-block-end",
+                "label": "t:settings.bottom",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "padding-inline-start",
+                "label": "t:settings.left",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "padding-inline-end",
+                "label": "t:settings.right",
+                "min": 0,
+                "max": 100,
+                "step": 1,
+                "unit": "px",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "padding-block-start-mobile",
+                "label": "Top Mobile",
+                "min": -1,
+                "max": 99,
+                "step": 1,
+                "unit": "px",
+                "default": -1
+            },
+            {
+                "type": "range",
+                "id": "padding-block-end-mobile",
+                "label": "Bottom Mobile",
+                "min": -1,
+                "max": 99,
+                "step": 1,
+                "unit": "px",
+                "default": -1
+            },
+            {
+                "type": "range",
+                "id": "padding-inline-start-mobile",
+                "label": "Left Mobile",
+                "min": -1,
+                "max": 99,
+                "step": 1,
+                "unit": "px",
+                "default": -1
+            },
+            {
+                "type": "range",
+                "id": "padding-inline-end-mobile",
+                "label": "Right Mobile",
+                "min": -1,
+                "max": 99,
+                "step": 1,
+                "unit": "px",
+                "default": -1
+            }
+        ],
+        "presets": [
+            {
+                "name": "Testimonial card",
+                "category": "Basic"
+            }
+        ]
+    }
+{% endschema %}

@@ -1,0 +1,28 @@
+{%- comment -%}
+  Intended for blocks and sections that provide values for all the referenced settings.
+
+  <div class="spacing-style" style="{%  render 'spacing-style', settings: section.settings %}">
+
+   Accepts:
+      settings: {settings || section.settings}
+{%- endcomment -%}
+
+{% assign preset = preset | default: settings.type_preset %}
+
+{%- capture variables -%}
+  {%- if preset != 'rte' and settings.color != "" -%}
+    --color: {{ settings.color }};
+  {%- endif -%}
+  {%- if preset == 'custom' -%}
+    --font-size: {{ settings.font_size }}px;
+    --font-size-mobile: {{ settings.font_size_mobile }}px;
+    --font-weight: {{ settings.weight }};
+    --font-family: {{ settings.font }};
+    --text-transform: {{ settings.case }};
+    --text-wrap: {{ settings.wrap }};
+    --line-height: {{ settings.line_height }}%;
+    {% assign preset_letter_spacing_value = settings.letter_spacing | times: 1.0 | divided_by: 100 | append: 'em' %}
+    --letter-spacing: {{ preset_letter_spacing_value }};
+  {%- endif -%}
+{%- endcapture -%}
+{{- variables | strip | strip_newlines -}}

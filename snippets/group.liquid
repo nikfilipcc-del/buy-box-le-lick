@@ -1,0 +1,185 @@
+{%- doc -%}
+  Renders block content for all blocks that extend the group block.
+
+  @param {string} children - The DOM content of the group block.
+  @param {object} settings - The settings of the group block.
+  @param {string} shopify_attributes - String with Shopify attributes for the editor.
+  @param {string} [class] - Custom classes for the group block.
+  @param {string} [style] - Custom inline styles for the group block.
+
+  @example
+  {% render 'group', children: children, settings: block.settings, shopify_attributes: block.shopify_attributes %}
+{%- enddoc -%}
+
+<div
+  id="{{ settings.id }}"
+  class="
+    group-block
+    group-block--height-{{ settings.height }}
+    group-block--width-{{ settings.width }}
+    group-block--height-{{ settings.height_mobile }}-mobile
+    border-style
+    spacing-style
+    size-style
+    {% render 'animate', animation: settings.animation %}
+    {% if settings.inherit_color_scheme == false %} color-{{ settings.color_scheme }}{% endif %}
+    {{ class }}
+  "
+  style="
+    {% render 'border-override', settings: settings %}
+    {% render 'spacing-style', settings: settings %}
+    {% render 'size-style', settings: settings %}
+    {{ style }}
+    {% if settings.enable_aspect_ratio %}
+      aspect-ratio: {{ settings.aspect_ratio | divided_by: 100.0 }};
+    {% endif %}
+  "
+  {{ shopify_attributes }}
+  data-testid="group-block"
+>
+  {%- if settings.link != blank -%}
+    <a
+      href="{{ settings.link }}"
+      class="group-block__link"
+      {% if settings.open_in_new_tab %}
+        target="_blank" rel="noopener"
+      {% endif %}
+    ></a>
+  {%- endif -%}
+
+  <div class="group-block__media-wrapper">
+    {% render 'background-media',
+      background_media: settings.background_media,
+      background_video: settings.video,
+      background_video_position: settings.video_position,
+      background_image: settings.background_image,
+      background_image_position: settings.background_image_position,
+      placeholder: settings.placeholder
+      hover_background_image: settings.hover_background_image
+      hover_background_image_position: settings.hover_background_image_position,
+      background_media_mobile: settings.background_media_mobile,
+      background_video_mobile: settings.video_mobile,
+      background_video_position_mobile: settings.video_position_mobile,
+      background_image_mobile: settings.background_image_mobile,
+      background_image_position_mobile: settings.background_image_position_mobile,
+    %}
+    {% if settings.toggle_overlay %}
+      {% render 'overlay', settings: settings, layer: '0' %}
+    {% endif %}
+  </div>
+
+  <div
+    class="
+      group-block-content
+      {% if request.design_mode %}group-block-content--design-mode{% endif %}
+      layout-panel-flex
+      layout-panel-flex--{{ settings.content_direction | default: 'column' }}
+      {% if settings.vertical_on_mobile %} mobile-column{% endif %}
+      {% if settings.mobile_reverse %} mobile-reverse--{{ settings.content_direction }}{% endif %}
+      {% if settings.width_mobile == 'custom' %} align-mobile--{{ settings.align_mobile }} {% endif %}
+    "
+    style="{% render 'layout-panel-style', settings: settings %}"
+  >
+    {{- children -}}
+  </div>
+</div>
+
+{% stylesheet %}
+  .group-block__link {
+    position: absolute;
+    inset: 0;
+  }
+
+  .group-block__link ~ :is(.group-block-content, .group-block__media-wrapper) {
+    pointer-events: none;
+
+    :is(a, button, input, textarea, select) {
+      pointer-events: auto;
+    }
+  }
+
+  /* Needs the .group-block__link ~ to be specific enough to take effect. */
+  .group-block__link ~ .group-block-content--design-mode {
+    pointer-events: auto;
+  }
+
+  .group-block__media-wrapper .background-image-container:nth-of-type(2) {
+    opacity: 0;
+    transition: opacity var(--transition-duration) var(--transition-ease-type) var(--transition-delay);
+  }
+
+  .group-block:hover > .group-block__media-wrapper .background-image-container:nth-of-type(2) {
+    opacity: 1;
+  }  
+
+  .group-block:hover .overlay--solid {
+    background: var(--overlay-hover-color);
+  }
+
+  .group-block:hover .overlay--gradient {
+    background: linear-gradient(var(--overlay-direction), var(--overlay-hover-color), var(--overlay-hover-color--end));
+  }
+{% endstylesheet %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const footerLogo = document.querySelector('.custom-logo__container');
+    const svgLogo = footerLogo.querySelector('svg path');
+
+    const footer = footerLogo.closest('.footer-content');
+
+    // Initialize Embla (or get your existing instance)
+    const emblaNode = footer.querySelector('.embla__viewport');
+    const embla = EmblaCarousel(emblaNode, {
+      loop: false, // adjust options as needed
+    });
+
+    
+    // Function to update footer logo color
+    const updateFooterLogoColor = () => {
+      const selectedIndex = embla.selectedScrollSnap();
+      const allSlides = emblaNode.querySelectorAll('.embla__slide'); // query DOM directly
+      const selectedSlide = allSlides[selectedIndex];
+      const selectedProduct = selectedSlide.querySelector('.slide-product__card');
+      const productColor = selectedProduct.dataset.productColor;
+
+      const fixedColor = "rgb(255, 222, 205)";
+      
+      if (productColor) {
+        svgLogo.style.fill = fixedColor;
+      }
+      
+      const fixedBlocks = document.querySelectorAll('.custom-block__container:not([change-color])');
+      const customBlocks = document.querySelectorAll('.custom-block__container[change-color]');
+
+      fixedBlocks.forEach((fixedBlock) => {
+        const bgColor = getComputedStyle(fixedBlock).backgroundColor;
+        if(bgColor != 'rgba(0, 0, 0, 0)') {
+          fixedBlock.style.backgroundColor = fixedColor;
+        } else {
+          fixedBlock.style.color = fixedColor;
+        }
+      });
+
+      customBlocks.forEach((customBlock) => {
+        const bgColor = getComputedStyle(customBlock).backgroundColor;
+        if(bgColor != 'rgba(0, 0, 0, 0)') {
+          customBlock.style.backgroundColor = productColor;
+        } else {
+          customBlock.style.color = productColor;
+        }
+      });
+
+      const socialIcons = document.querySelectorAll('.social-icons__icon-wrapper');
+      socialIcons.forEach((socialIcon) => {
+        socialIcon.style.backgroundColor = fixedColor;
+      });
+    };
+
+    // Initial update
+    updateFooterLogoColor();
+
+    // Update whenever slide changes
+    embla.on('select', updateFooterLogoColor);
+  });
+</script>

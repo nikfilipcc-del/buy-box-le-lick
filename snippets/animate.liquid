@@ -1,0 +1,10 @@
+{% liquid
+  case animation
+    when 'fade-in'
+        echo ' scroll-trigger animate--fade-in '
+    when 'slide-in'
+        echo ' scroll-trigger animate--slide-in '
+    else 
+        echo ''
+  endcase
+%}

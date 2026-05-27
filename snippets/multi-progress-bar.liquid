@@ -1,0 +1,220 @@
+<style>
+    .multi-steps > li.is-active:before, .multi-steps > li.is-active ~ li:before {
+  content: counter(stepNum);
+  font-family: inherit;
+  font-weight: 500; 
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+}
+.multi-steps > li.is-active:after, .multi-steps > li.is-active ~ li:after {
+  background-color: #ededed;
+}
+
+.multi-steps {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+}
+.multi-steps > li {
+  counter-increment: stepNum;
+  text-align: center;
+  display: table-cell;
+  position: relative;
+  color: #FF6E25;
+}
+.multi-steps > li span {
+  color: #979797;
+}
+.multi-steps > li:before {
+  content: '\f00c';
+  content: '\2713;';
+  content: '\10003';
+  content: '\10004';
+  content: '\2713';
+  display: block;
+  margin: 0 auto 4px;
+  background-color: #fff;
+  width: 20px;
+  height: 20px;
+  line-height: 16px;
+  text-align: center;
+  font-weight: bold;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #FF6E25;
+  border-radius: 50%;
+  /* box-shadow: 0 0 0px 4px rgba(42,65,232,.12); */
+}
+.multi-steps > li:after {
+  content: '';
+  height: 4px;
+  width: 100%;
+  background-color: #FF6E25;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  z-index: -1;
+}
+
+.multi-steps > li.before-active:after {
+  width: 100%;
+  background-color: #FF6E25;
+  /* -webkit-animation: increase 2s;
+  -moz-animation:    increase 2s; 
+  -o-animation:      increase 2s; 
+  animation:         increase 2s; 
+  animation-fill-mode: forwards; */
+}
+
+/* @keyframes increase {
+    100% {
+        width: 100%;
+    }
+} */
+
+.multi-steps > li:last-child:after {
+  display: none;
+}
+.multi-steps > li.is-active:before {
+  background-color: #fff;
+  border-color: #FF6E25;
+}
+.multi-steps > li.is-active ~ li {
+  color: #979797;
+}
+.multi-steps > li.is-active ~ li:before {
+  background-color: #ededed;
+  border-color: #ededed;
+  box-shadow: none;
+}
+.box_type-number {
+    position: absolute;
+    top: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-h1--family);
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 130%;
+    letter-spacing: 0;
+    min-width: 100px;
+    color: #000 !important;
+}
+.box_type_price {
+    position: absolute;
+    bottom: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.container-fluid--title {
+    font-family: var(--font-h1--family);
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 100%;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    padding-bottom: 42px;
+    {% comment %} padding-top: 30px; {% endcomment %}
+    {% comment %} border-top: 1px solid #979797; {% endcomment %}
+
+    @media (max-width: 768px) {
+        padding-bottom: 30px;
+    }
+}
+
+.container-fluid li.init::before {
+    content: '';
+    border-color: #979797 !important;
+}
+.container-fluid li.init::after {
+    content: '';
+    background: #979797 !important; 
+}
+.container-fluid li.is-active .box_type_price {
+    font-weight: 500;
+    color: #000;
+}
+.best-badge {
+    position: absolute;
+    top: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #FF6E25;
+    padding: 4px;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 0;
+    line-height: 100%;
+    font-weight: 700;
+    color: #fff !important;
+    width: 90px;
+
+    @media (max-width: 768px) {
+    top: -50px;
+    font-size: 10px;
+    width: 70px;
+    }
+}
+
+.one-time {
+  display: none;
+}
+
+
+@media (max-width: 768px) {
+    .container-fluid--title {
+        font-size: 20px;
+        line-height: 90%;
+    }
+    .box_type-number {
+        font-size: 16px;
+        top: -25px;
+    }
+    .box_type_price {
+        bottom: -20px;
+    }
+    .multi-steps > li:before {
+        width: 16px;
+        height: 16px;
+    }
+    .multi-steps > li:after {
+        top: 9px;
+        height: 2px;
+    }
+}
+</style>
+
+<div class="container-fluid">
+    <div class="container-fluid--title">{{  block_settings.toolbar_title }}</div>
+  <br /><br />
+  <ul class="list-unstyled multi-steps">
+    <li class="init" data-box-number="1">
+        <span class="box_type-number">1 Box</span>
+        <span class="box_type_price subscribe">$45/box</span>
+        <span class="box_type_price one-time">$54/box</span>
+    </li>
+    <li class="init" data-box-number="2">
+        <span class="box_type-number">2 Boxes</span>
+        <span class="box_type_price subscribe">$42/box</span>
+        <span class="box_type_price one-time">$51/box</span>
+
+    </li>
+    <li class="init" data-box-number="3">
+        <span class="box_type-number ">3 Boxes</span>
+        <span class="box_type_price subscribe">$39/box</span>
+        <span class="box_type_price one-time">$48/box</span>
+
+    </li>
+    <li class="init" data-box-number="4">
+        <span class="best-badge">best deal</span>
+        <span class="box_type-number">4+ Boxes</span>
+        <span class="box_type_price subscribe">$36/box</span>
+        <span class="box_type_price one-time">$45/box</span>
+
+    </li>
+  </ul>
+  <br /><br />
+</div>
