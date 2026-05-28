@@ -363,7 +363,7 @@
                     "discount_text": "",
                     "discount_color": "#0fa573",
                     "discount_text_color": "#000000",
-                    "additional_subscription_content": "<ul>\n<li>FREE SHIPPING on First order</li>\n<li>25% OFF</li>\n<li>Out Of Stock Protection</li>\n<li>No Contracts Cancel easily</li>",
+                    "additional_subscription_content": "<ul>\n<li>✓FREE SHIPPING on First order</li>\n<li>✓25% OFF</li>\n<li>✓Out Of Stock Protection</li>\n<li>✓No Contracts Cancel easily</li>",
                     "selector_type": "dropdown",
                     "button_plan_selector_width": 100,
                     "show_tooltip": false,
