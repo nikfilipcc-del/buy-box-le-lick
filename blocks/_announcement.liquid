@@ -24,7 +24,19 @@
     aria-hidden="{% if block_index == 0 %}false{% else %}true{% endif %}"
   >
     <p class="announcement-bar__text">
-      {{ block.settings.text }}
+     {% if request.page_type == 'product' %}
+
+  BUNDLE UP, BUTTERCUP - SAVE 20%
+
+{% elsif request.page_type == 'index' %}
+
+  Welcome To Our Store 🔥
+
+{% else %}
+
+  {{ block.settings.text }}
+
+{% endif %}
     </p>
 
     {% if block_settings.link != blank %}
