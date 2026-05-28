@@ -33,9 +33,6 @@
       data-shopify-visual-preview
     {% endif %}
   > 
-  {% render 'multi-progress-bar' block_settings:block_settings %}
-
-
     <form class="variant-picker__form" data-product-handle="{{ product_resource.handle }}" data-selected-variant-price="$45.00" data-selected-variant-discount-price="0">
       {%- for product_option in product_resource.options_with_values -%}
         {%- liquid
@@ -175,6 +172,7 @@
                 }
               {% endstyle %}
         {% endif %}
+  {% render 'multi-progress-bar' block_settings:block_settings %}
 
           {% style %}
             .variant-badge {
