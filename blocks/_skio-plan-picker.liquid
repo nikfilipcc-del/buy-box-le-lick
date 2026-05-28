@@ -133,11 +133,7 @@
     }    
   </style>
 
-{% if settings_obj.subscription_heading != blank %}
-  <div class="subscription-heading">
-    {{ settings_obj.subscription_heading }}
-  </div>
-{% endif %}
+
 
 
   <{{ element_name }}
@@ -162,7 +158,11 @@
     {%- endcomment -%}
     <input type='hidden' name='selling_plan' form='{{ resolved_form_id }}'>
   </{{ element_name }}>
-
+{% if settings_obj.subscription_heading != blank %}
+  <div class="subscription-heading">
+    {{ settings_obj.subscription_heading }}
+  </div>
+{% endif %}
   <script src='{{ "skio-plan-picker-component.js" | asset_url }}' type='module'></script>
 
 {% else %}
