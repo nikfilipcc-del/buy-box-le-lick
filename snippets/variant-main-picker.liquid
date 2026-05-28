@@ -913,3 +913,35 @@
 {% endstylesheet %}
 
 
+<script>
+
+
+  async function updateFooter(){
+
+  const res = await fetch('/cart.js');
+
+  const cart = await res.json();
+
+  let totalBoxes = cart.item_count;
+
+  let totalCount = totalBoxes * 30;
+
+  let totalPrice = Shopify.formatMoney(
+    cart.total_price,
+    Shopify.money_format
+  );
+
+
+
+  // FOOTER PRICE
+  document.querySelector('.total-right').innerHTML =
+    `${totalCount} Count • ${totalBoxes} Box • ${totalPrice}`;
+
+
+
+  // BUTTON PRICE
+  document.querySelector('.btn-price').innerHTML =
+    totalPrice;
+
+}
+  </script>
