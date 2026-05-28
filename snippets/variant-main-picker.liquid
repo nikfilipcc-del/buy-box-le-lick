@@ -272,6 +272,22 @@
   </variant-picker>
 {% endunless %}
 
+
+<div class="bundle-footer">
+
+    <div class="total-left">
+      🛒 Total item
+    </div>
+
+    <div class="total-right">
+      0 Count • 0 Box • {{ cart.total_price | money }}
+    </div>
+
+  </div>
+
+
+
+
 <!----28-05-26------>
 
   {% render 'multi-progress-bar-le-lick' block_settings:block_settings %}
