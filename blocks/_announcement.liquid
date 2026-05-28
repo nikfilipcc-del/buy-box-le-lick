@@ -24,15 +24,14 @@
     aria-hidden="{% if block_index == 0 %}false{% else %}true{% endif %}"
   >
     <p class="announcement-bar__text">
-     {% if request.page_type == 'product' %}
+      {% comment %} {{ block.settings.text }} {% endcomment %}
 
-  BUNDLE UP, BUTTERCUP 
+
+      {% if request.page_type == 'product' %}
+
+ FREE SHIPPING on your first order!
 
 {% elsif request.page_type == 'index' %}
-
-  Welcome To Our Store 🔥
-
-{% else %}
 
   {{ block.settings.text }}
 
