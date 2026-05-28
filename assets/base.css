@@ -4913,3 +4913,6 @@ text-component {
 .new-main-product .product-information__grid .product-information__media .slideshow-controls__dots {gap:16px;}
 .new-main-product .product-information__grid .product-information__media .slideshow-controls__dots .slideshow-control.button[aria-selected="true"]{background:#FF6E25;height:14px;width:14px;}
 }
+
+
+.featured-product-section{display:none !important;}
