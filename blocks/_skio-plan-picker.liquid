@@ -12,7 +12,7 @@
 
   assign debug = false
   if request.design_mode
-    assign debug = true
+    assign debug = false
   endif
 
   assign has_block = false
@@ -219,12 +219,7 @@
   position:relative;
   z-index:2;
 }
-.shopify-design-mode skio-plan-picker,
-.shopify-design-mode .skio-debug,
-.shopify-design-mode [class*="debug"],
-.shopify-design-mode [class*="Debug"]{
-  display:none !important;
-}
+
   </style>
 
   <{{ block.settings.element_name }}
