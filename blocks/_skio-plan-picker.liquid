@@ -134,7 +134,11 @@
   </style>
 
 
-
+{% if settings_obj.subscription_heading != blank %}
+  <div class="custom-subscription-heading">
+    {{ settings_obj.subscription_heading }}
+  </div>
+{% endif %}
 
   <{{ element_name }}
     key='{{ block.id }}'
@@ -153,13 +157,13 @@
       selectedVariant='{{ product_obj.selected_or_first_available_variant | json | escape }}'
     {% endif %}
   >
-<!----28-05-26---->
+{% comment %} <!----28-05-26---->
   {% if settings_obj.subscription_heading != blank %}
     <div class="custom-subscription-badge">
       {{ settings_obj.subscription_heading }}
     </div>
   {% endif %}
-<!---------------->
+<!----------------> {% endcomment %}
     {%- comment -%}
       IMPORTANT: use the same form id you pass as formId above
     {%- endcomment -%}
@@ -199,6 +203,22 @@
       --skio-tooltip-background-color: {{ block.settings.tooltip_background_color }};
       --skio-tooltip-text-color: {{ block.settings.tooltip_text_color }};
     }
+
+
+    .custom-subscription-heading{
+  background:#ff6a1a;
+  color:#fff;
+  font-size:20px;
+  font-weight:700;
+  text-transform:uppercase;
+  text-align:center;
+  padding:10px 20px;
+  border-radius:6px 6px 0 0;
+  width:fit-content;
+  margin:0 auto -2px;
+  position:relative;
+  z-index:2;
+}
   </style>
 
   <{{ block.settings.element_name }}
