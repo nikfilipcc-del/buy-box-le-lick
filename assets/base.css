@@ -4876,3 +4876,12 @@ text-component {
 
 
 .new-main-product .product-information__grid .product-details .product-form-buttons{margin-top:30px;padding-top:30px;border-top:2px solid #979797;}
+
+.group-content-additional ul {
+    margin: 0;
+    display: grid;
+    gap: 12px;
+    flex-direction: column;
+    grid-template-columns: 1fr 1fr;
+    padding-left: 0;
+}
