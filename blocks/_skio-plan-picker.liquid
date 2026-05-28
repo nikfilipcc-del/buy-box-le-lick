@@ -153,13 +153,13 @@
       selectedVariant='{{ product_obj.selected_or_first_available_variant | json | escape }}'
     {% endif %}
   >
-
+<!----28-05-26---->
   {% if settings_obj.subscription_heading != blank %}
     <div class="custom-subscription-badge">
       {{ settings_obj.subscription_heading }}
     </div>
   {% endif %}
-
+<!---------------->
     {%- comment -%}
       IMPORTANT: use the same form id you pass as formId above
     {%- endcomment -%}
