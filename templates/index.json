@@ -353,7 +353,7 @@
               "name": "t:names.button",
               "settings": {
                 "label": "Shop Now",
-                "link": "#buy-box-section",
+                "link": "shopify://products/electrolyte-lollipops",
                 "open_in_new_tab": false,
                 "style_class": "button",
                 "icon_type": "none",
@@ -1539,6 +1539,7 @@
                         "group_selected_text_color": "#000000",
                         "show_radio_selector": true,
                         "onetime_title": "One time purchase",
+                        "subscription_heading": "🔥 SAVE 25% — BEST VALUE",
                         "subscription_title": "SUBSCRIBE",
                         "prepaid_title": "Prepaid",
                         "discount_format": "percent",
