@@ -4900,7 +4900,7 @@ text-component {
 .new-main-product {padding:50px 0;}
 .new-main-product .product-information .product-details .group-block-content .text-block--AVjNLYklnYmF0NzN2K__text_nfVhJc h3{font-family: 'MD Primer';font-style: normal;font-weight: 600;font-size: 20px;line-height: 90%;color: #000000;margin:40px 0 18px;}
 .new-main-product .product-information .product-details .group-block-content .text-block--AZ3NDc0R4MUtzVjgzS__text_VFfVBa{font-family: 'MD Primer';font-style: normal;font-weight: 700;font-size: 14px;line-height: 130%;}    
-.new-main-product .product-information .product-details .variant-option .variant-option__button-label{min-width:60px;height:60px;}   
+.new-main-product .product-information .product-details .variant-option .variant-option__button-label{min-width:60px;height:60px !important;}   
 .new-main-product .product-information__grid .product-details .quantity-selector .sold-out{padding:12px 0px;}
 .new-main-product .product-information__grid .product-details .quantity-selector .sold-out .init-quantity-selector--content{font-size: 10px !important;}
 .new-main-product .variant-option__button-label-property quantity-selector-component:has(.sold-out){min-width:114px !important;}
