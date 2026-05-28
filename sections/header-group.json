@@ -56,7 +56,7 @@
           "name": "t:names.button",
           "settings": {
             "label": "Shop All",
-            "link": "#buy-box-section",
+            "link": "shopify://products/electrolyte-lollipops",
             "open_in_new_tab": false,
             "style_class": "button",
             "icon_type": "none",
