@@ -23,11 +23,10 @@
     {{ block.shopify_attributes }}
     aria-hidden="{% if block_index == 0 %}false{% else %}true{% endif %}"
   >
-    <p class="announcement-bar__text">
-  {{ block.settings.text }}
-    </p>
+    {% if request.page_type == 'product' %}
 
-{% if request.page_type == 'product' %}
+<p class="announcement-bar__text" style="display:flex;align-items:center;justify-content:center;gap:6px;">
+
 <svg xmlns="http://www.w3.org/2000/svg" 
      width="14" 
      height="14" 
@@ -44,10 +43,18 @@
   <circle cx="18.5" cy="18.5" r="2"></circle>
 
 </svg>
+
 FREE SHIPPING on your first order!
+
+</p>
+
+{% else %}
+
+<p class="announcement-bar__text">
+  {{ block.settings.text }}
+</p>
+
 {% endif %}
-
-
 
     {% if block_settings.link != blank %}
       <a
