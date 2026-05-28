@@ -207,7 +207,7 @@
                   "type": "text",
                   "name": "t:names.text",
                   "settings": {
-                    "text": "<p><strong>ESTIMATED ARRIVAL MAY 22 - MAY 26</strong></p>",
+                    "text": "<p>📅 <strong>ESTIMATED ARRIVAL MAY 22 - MAY 26</strong></p>",
                     "mobile_text": "",
                     "width": "fit-content",
                     "max_width": "normal",
