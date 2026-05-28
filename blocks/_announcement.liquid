@@ -25,6 +25,7 @@
   >
     <p class="announcement-bar__text">
   {{ block.settings.text }}
+    </p>
 
 {% if request.page_type == 'product' %}
 <svg xmlns="http://www.w3.org/2000/svg" 
@@ -47,7 +48,6 @@ FREE SHIPPING on your first order!
 {% endif %}
 
 
-    </p>
 
     {% if block_settings.link != blank %}
       <a
