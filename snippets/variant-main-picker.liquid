@@ -172,7 +172,7 @@
                 }
               {% endstyle %}
         {% endif %}
-  {% render 'multi-progress-bar' block_settings:block_settings %}
+
 
           {% style %}
             .variant-badge {
@@ -271,7 +271,10 @@
     </form>
   </variant-picker>
 {% endunless %}
+<div class="progress-bars">
+  {% render 'multi-progress-bar' block_settings:block_settings %}
 
+</div>
 {% stylesheet %}
 .variant-option__button-label-property.has-quantity label{
       background-color: var(--hover-color) !important;
