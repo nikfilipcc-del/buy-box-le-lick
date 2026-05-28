@@ -4879,9 +4879,9 @@ text-component {
 
 .group-content-additional ul {
     margin: 0;
-    display: grid;
+    display: grid !important;
     gap: 12px;
     flex-direction: column;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr !important;
     padding-left: 0;
 }
