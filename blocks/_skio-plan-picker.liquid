@@ -133,6 +133,13 @@
     }    
   </style>
 
+{% if settings_obj.subscription_heading != blank %}
+  <div class="subscription-heading">
+    {{ settings_obj.subscription_heading }}
+  </div>
+{% endif %}
+
+
   <{{ element_name }}
     key='{{ block.id }}'
     options='{{ settings_obj | json | escape }}'
